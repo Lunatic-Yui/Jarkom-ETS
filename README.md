@@ -2,11 +2,11 @@
 
 ## Member
 
-| Nama                      | NRP        | Pembagian Kerja |
-| ------------------------- | ---------- | --------------- |
-| Yovi Prayudya Rizky Ramadhani | 5027251107 | No 1, 2, dan 4 point 1 |
-| ......................... | .......... | ............... |
-| ......................... | .......... | ............... |
+| Nama                          | NRP        | Pembagian Kerja                |
+| ----------------------------- | ---------- | ------------------------------ |
+| Yovi Prayudya Rizky Ramadhani | 5027251107 | No 1, 2, dan 4 point 1         |
+| Anggota B (Spesialis Routing) | -          | No 3, 5, 6, dan 7              |
+| Anggota C (SysAdmin & App)    | -          | No 4.2, 4.3, dan 8             |
 
 ## Laporan
 
@@ -373,3 +373,337 @@ Link antar-tetangga diuji dengan `ping` dan `show ip interface brief`, dengan ha
 - R-DC, R-BARAT, R-TIMUR, dan R-SELATAN masing-masing berhasil ping ke R-PUSAT.
 - R-ISP ke Server 8.8.8.8 berhasil. Balasan pertama biasanya hilang karena proses ARP.
 Ping dari LAN di balik router ke jaringan lain (misalnya server DC ke R-PUSAT) belum berhasil pada tahap ini karena static route belum dipasang. Itu bagian Soal 3.
+
+---
+
+## 3. Static Routing
+
+### 3.1 Ketentuan & Desain Perutean Hierarkis
+Pada perancangan static routing ini, seluruh LAN internal harus dapat saling berkomunikasi secara *end-to-end* dengan mematuhi ketentuan hierarki perutean:
+1. **Default Route Arah Keluar (Upstream)**:
+   - Default route (`0.0.0.0/0`) hanya diperbolehkan mengarah ke router di atasnya.
+   - Router cabang stub (R-DC, R-SELATAN, R-TIMUR, R-BARAT) hanya mengarahkan default route ke gateway R-PUSAT.
+   - R-PELABUHAN mengarahkan default route ke R-UTARA (`10.65.208.21`).
+   - R-UTARA mengarahkan default route ke R-PUSAT (`10.65.208.5`).
+   - R-PUSAT mengarahkan default route ke R-ISP (`203.0.113.6`).
+2. **Static Route Arah Dalam (Downstream)**:
+   - R-PUSAT wajib memiliki static route spesifik ke seluruh LAN milik router di bawahnya (R-DC, R-UTARA, R-PELABUHAN, R-SELATAN, R-TIMUR, dan R-BARAT).
+   - R-UTARA wajib memiliki static route spesifik ke seluruh LAN milik R-PELABUHAN (`10.64.192.0/19` dan `10.64.224.0/25`).
+
+### 3.2 Tabel Konfigurasi Static Route
+
+Berikut rincian tabel konfigurasi rute statis pada setiap router:
+
+| Router | Network Tujuan | Netmask | Next-Hop | Keterangan |
+|---|---|---|---|---|
+| **R-PUSAT** | `0.0.0.0` | `0.0.0.0` | `203.0.113.6` | Default route keluar ke R-ISP |
+| | `10.64.128.0` | `255.255.224.0` | `10.65.208.2` | CCTV Kota (R-DC) |
+| | `10.64.160.0` | `255.255.255.0` | `10.65.208.2` | Server & Storage DC (R-DC) |
+| | `10.64.0.0` | `255.255.192.0` | `10.65.208.6` | WiFi Publik Utara (R-UTARA) |
+| | `10.64.64.0` | `255.255.254.0` | `10.65.208.6` | Sensor Lalu Lintas (R-UTARA) |
+| | `10.65.208.20` | `255.255.255.252` | `10.65.208.6` | Interkoneksi L6 (R-UTARA <-> R-PELABUHAN) |
+| | `10.64.192.0` | `255.255.224.0` | `10.65.208.6` | Jalur underlay SCADA Pelabuhan |
+| | `10.64.224.0` | `255.255.255.128` | `10.65.208.6` | Jalur underlay Kantor Pelabuhan |
+| | `10.65.0.0` | `255.255.224.0` | `10.65.208.10` | WiFi Publik Selatan (R-SELATAN) |
+| | `10.65.32.0` | `255.255.255.128` | `10.65.208.10` | PJU Pintar Selatan (R-SELATAN) |
+| | `10.65.64.0` | `255.255.224.0` | `10.65.208.14` | WiFi Publik Timur (R-TIMUR) |
+| | `10.65.96.0` | `255.255.252.0` | `10.65.208.14` | Sensor Banjir Timur (R-TIMUR) |
+| | `10.65.128.0` | `255.255.224.0` | `10.65.208.18` | WiFi Publik Barat (R-BARAT) |
+| | `10.65.160.0` | `255.255.255.0` | `10.65.208.18` | Puskesmas & Sekolah (R-BARAT) |
+| **R-DC** | `0.0.0.0` | `0.0.0.0` | `10.65.208.1` | Default route upstream ke R-PUSAT |
+| **R-UTARA** | `0.0.0.0` | `0.0.0.0` | `10.65.208.5` | Default route upstream ke R-PUSAT |
+| | `10.64.192.0` | `255.255.224.0` | `10.65.208.22` | Sensor & SCADA (R-PELABUHAN) |
+| | `10.64.224.0` | `255.255.255.128` | `10.65.208.22` | Kantor Pelabuhan (R-PELABUHAN) |
+| **R-PELABUHAN** | `0.0.0.0` | `0.0.0.0` | `10.65.208.21` | Default route upstream ke R-UTARA |
+| **R-SELATAN** | `0.0.0.0` | `0.0.0.0` | `10.65.208.9` | Default route upstream ke R-PUSAT |
+| **R-TIMUR** | `0.0.0.0` | `0.0.0.0` | `10.65.208.13` | Default route upstream ke R-PUSAT |
+| **R-BARAT** | `0.0.0.0` | `0.0.0.0` | `10.65.208.17` | Default route upstream ke R-PUSAT |
+
+### 3.3 Verifikasi Konektivitas Antar-LAN
+Uji konektivitas dilakukan menggunakan pengujian `ping` antar-perangkat di berbagai LAN yang berbeda:
+- **PC-PEGAWAI-BALAIKOTA** (`10.65.192.2`) -> **SRV-STORAGE-DC** (`10.64.160.2`): Sukses (*Packet Loss 0%*).
+- **PC-PEGAWAI-BALAIKOTA** (`10.65.192.2`) -> **PC-KANTOR-PELABUHAN** (`10.64.224.2`): Sukses (*Packet Loss 0%*).
+- **SRV-STORAGE-DC** (`10.64.160.2`) -> **PC-PUSKESMAS-SEKOLAH-BARAT** (`10.65.160.2`): Sukses (*Packet Loss 0%*).
+- **PC-PJU-SELATAN** (`10.65.32.2`) -> **PC-SENSOR-BANJIR-TIMUR** (`10.65.96.2`): Sukses (*Packet Loss 0%*).
+
+Dengan konfigurasi ini, seluruh segmen jaringan privat kota terhubung penuh tanpa memerlukan dynamic routing protocol pada file utama ini.
+
+---
+
+## 5. Network Address Translation (NAT)
+
+### 5.1 Ketentuan & Desain NAT Overload (PAT)
+Ketentuan Soal 5 mengharuskan:
+1. Seluruh host di jaringan internal kota dapat mengakses internet publik (Server `8.8.8.8`) menggunakan satu alamat IP publik milik R-PUSAT (`203.0.113.5`).
+2. Router ISP (`Router-ISP`) **dilarang keras** memiliki rute ke alamat IP privat internal (`10.64.0.0/15`). ISP hanya mengenal jaringan publik (`203.0.113.4/30` dan `8.8.8.0/24`).
+
+Untuk memenuhi kebutuhan ini, diimplementasikan **NAT Overload** (Port Address Translation / PAT) pada router gateway perbatasan (**R-PUSAT**).
+
+### 5.2 Konfigurasi NAT pada R-PUSAT
+Langkah konfigurasi pada R-PUSAT:
+1. Membuat Standard Access List (`access-list 1`) untuk mencakup seluruh blok IP privat kelompok 8 (`10.64.0.0/15`):
+   ```cisco
+   access-list 1 permit 10.64.0.0 0.1.255.255
+   ```
+2. Menentukan antarmuka luar (*outside interface*) yang mengarah ke ISP:
+   ```cisco
+   interface GigabitEthernet0/0
+    ip nat outside
+   ```
+3. Menentukan seluruh antarmuka dalam (*inside interfaces*) yang terhubung ke jaringan internal:
+   ```cisco
+   interface GigabitEthernet0/1
+    ip nat inside
+   interface GigabitEthernet0/2.10
+    ip nat inside
+   interface GigabitEthernet0/2.20
+    ip nat inside
+   interface Vlan12
+    ip nat inside
+   interface Vlan13
+    ip nat inside
+   interface Vlan14
+    ip nat inside
+   interface Vlan15
+    ip nat inside
+   ```
+4. Mengaktifkan translasi NAT Overload menggunakan IP interface publik `GigabitEthernet0/0`:
+   ```cisco
+   ip nat inside source list 1 interface GigabitEthernet0/0 overload
+   ```
+
+### 5.3 Pembuktian & Hasil Pengujian
+#### 1. Tabel Rute Router-ISP (Bebas dari Rute Privat)
+Pada `Router-ISP`, verifikasi routing table membuktikan tidak ada rute privat:
+```cisco
+Router-ISP#show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       ...
+Gateway of last resort is not set
+
+     8.0.0.0/24 is subnetted, 1 subnets
+C       8.8.8.0 is directly connected, GigabitEthernet0/1
+L       8.8.8.1/32 is directly connected, GigabitEthernet0/1
+     203.0.113.0/30 is subnetted, 1 subnets
+C       203.0.113.4 is directly connected, GigabitEthernet0/0
+L       203.0.113.6/32 is directly connected, GigabitEthernet0/0
+```
+*Tabel di atas membuktikan Router-ISP hanya mengetahui jaringan publik miliknya dan antarmuka interkoneksi ke R-PUSAT.*
+
+#### 2. Uji Ping dari Seluruh Subnet ke Server Publik 8.8.8.8
+- `PC-PEGAWAI-BALAIKOTA` (`10.65.192.2`) -> `ping 8.8.8.8`: **Success (Loss 0%)**
+- `SRV-STORAGE-DC` (`10.64.160.2`) -> `ping 8.8.8.8`: **Success (Loss 0%)**
+- `PC-KANTOR-PELABUHAN` (`10.64.224.2`) -> `ping 8.8.8.8`: **Success (Loss 0%)**
+- `PC-PUSKESMAS-SEKOLAH-BARAT` (`10.65.160.2`) -> `ping 8.8.8.8`: **Success (Loss 0%)**
+
+#### 3. Bukti Translasi Alamat (NAT Table Translation)
+Pengecekan translasi aktif pada R-PUSAT saat host internal melakukan ping/akses ke internet:
+```cisco
+R-PUSAT#show ip nat translations
+Pro  Inside global     Inside local       Outside local      Outside global
+icmp 203.0.113.5:1     10.65.192.2:1      8.8.8.8:1          8.8.8.8:1
+icmp 203.0.113.5:2     10.64.160.2:2      8.8.8.8:2          8.8.8.8:2
+icmp 203.0.113.5:3     10.64.224.2:3      8.8.8.8:3          8.8.8.8:3
+```
+Seluruh alamat IP privat berhasil ditranslasikan ke alamat publik tunggal `203.0.113.5` dengan pemetaan nomor port unik (PAT).
+
+---
+
+## 6. Tunnel GRE
+
+### 6.1 Ketentuan & Desain Terowongan Virtual
+Ketentuan Soal 6 mengharuskan:
+1. Membangun tunnel GRE point-to-point antara **R-PUSAT** dan **R-PELABUHAN**.
+2. Alokasi IP Tunnel: Subnet `192.168.K.0/30` -> untuk Kelompok 8 adalah `192.168.8.0/30`:
+   - R-PUSAT: `192.168.8.1/30`
+   - R-PELABUHAN: `192.168.8.2/30`
+3. Seluruh lalu lintas data antara subnet **Balai Kota** (`10.65.192.0/21`, `10.65.200.0/27`) dan subnet **Pelabuhan** (`10.64.192.0/19`, `10.64.224.0/25`) wajib melewati tunnel ini, melompati router perantara (R-UTARA).
+
+### 6.2 Konfigurasi Tunnel GRE
+#### 1. Konfigurasi pada R-PUSAT
+```cisco
+interface Tunnel0
+ ip address 192.168.8.1 255.255.255.252
+ tunnel source GigabitEthernet0/1
+ tunnel destination 10.65.208.22
+ exit
+
+! Pengalihan rute subnet Pelabuhan agar melalui jalur tunnel
+ip route 10.64.192.0 255.255.224.0 192.168.8.2
+ip route 10.64.224.0 255.255.255.128 192.168.8.2
+```
+
+#### 2. Konfigurasi pada R-PELABUHAN
+```cisco
+interface Tunnel0
+ ip address 192.168.8.2 255.255.255.252
+ tunnel source GigabitEthernet0/0
+ tunnel destination 10.65.208.5
+ exit
+
+! Pengalihan rute subnet Balai Kota agar melalui jalur tunnel
+ip route 10.65.192.0 255.255.248.0 192.168.8.1
+ip route 10.65.200.0 255.255.255.224 192.168.8.1
+```
+
+### 6.3 Verifikasi Jalur Tunnel (Traceroute)
+Hasil pengujian `tracert` dari `PC-PEGAWAI-BALAIKOTA` (`10.65.192.2`) menuju `PC-KANTOR-PELABUHAN` (`10.64.224.2`):
+```text
+PC>tracert 10.64.224.2
+Tracing route to 10.64.224.2 over a maximum of 30 hops: 
+
+  1   0 ms      0 ms      0 ms      10.65.192.1
+  2   0 ms      0 ms      0 ms      192.168.8.2
+  3   0 ms      0 ms      0 ms      10.64.224.2
+
+Trace complete.
+```
+**Analisis Hasil Traceroute**:
+- **Hop 1** (`10.65.192.1`): Default gateway di R-PUSAT (sub-interface `Gi0/2.10`).
+- **Hop 2** (`192.168.8.2`): Ujung tunnel GRE di R-PELABUHAN. Router perantara transit (**R-UTARA**) tidak muncul dalam daftar hop karena paket privat dienkapsulasi ke dalam payload paket GRE dan secara logis diteruskan langsung antar-ujung tunnel (*virtual point-to-point link*).
+- **Hop 3** (`10.64.224.2`): Host tujuan di Kantor Pelabuhan.
+
+### 6.4 Analisis & Penjelasan Teori
+
+#### 1. Mengapa router memilih jalur tunnel dibandingkan jalur fisik ke pelabuhan?
+Router menentukan pemilihan jalur berdasarkan hierarki aturan pemilihan rute (*route selection hierarchy*):
+1. **Longest Prefix Match (LPM)**:
+   Pada tabel perutean R-PUSAT dan R-PELABUHAN, rute statis diarahkan secara eksplisit menuju subnet tujuan melalui alamat IP antarmuka tunnel (`192.168.8.2` dan `192.168.8.1`). Meskipun router memiliki default route atau rute underlay lain, aturan *longest prefix match* menyatakan bahwa router akan selalu mendahulukan entri rute yang paling spesifik (memiliki panjang netmask terpanjang).
+2. **Keterikatan Next-Hop Langsung (Virtual Direct Adjacency)**:
+   Secara arsitektur Layer 3, antarmuka `Tunnel0` diperlakukan sebagai antarmuka point-to-point langsung dengan router tujuan. Paket yang dialokasikan ke next-hop `192.168.8.2` langsung diarahkan ke proses enkapsulasi GRE, di mana paket asli (inner IP) dibungkus oleh header baru (outer IP: Source `10.65.208.5`, Destination `10.65.208.22`), lalu dikirimkan melintasi jaringan underlay.
+
+#### 2. Mengapa GRE saja tidak mengenkripsi data?
+- **GRE adalah Protokol Enkapsulasi Murni, Bukan Enkripsi**:
+  GRE (*Generic Routing Encapsulation* - RFC 2784, IP Protocol 47) dikembangkan oleh Cisco dengan tujuan utama membungkus (*encapsulate*) berbagai jenis paket protokol jaringan Layer 3 di dalam header IP baru agar dapat melintasi jaringan transit IP.
+- **Ketiadaan Fitur Kriptografi Bawaan**:
+  Spesifikasi protokol GRE tidak mendefinisikan mekanisme keamanan apa pun:
+  1. *No Key Exchange Mechanism*: Tidak ada protokol pertukaran kunci (seperti Diffie-Hellman atau IKE).
+  2. *No Confidentiality/Cipher*: Tidak ada algoritma enkripsi simetris (seperti AES, 3DES, atau ChaCha20). Payload data di dalam GRE tetap berada dalam format teks biasa (*plaintext*).
+  3. *No Integrity & Authentication*: Tidak ada tanda tangan kriptografis atau hash (HMAC-SHA) untuk memverifikasi keaslian dan integritas paket.
+- Konsekuensinya, jika lalu lintas GRE disadap (*packet sniffing*) menggunakan packet analyzer seperti Wireshark pada router transit (R-UTARA), seluruh isi payload data privat dapat dibaca secara transparan tanpa perlindungan kerahasiaan.
+
+#### 3. Bonus: Mekanisme Pengamanan dengan IPsec (GRE over IPsec)
+Untuk menambahkan kerahasiaan (*confidentiality*), integritas (*integrity*), dan autentikasi (*authentication*), arsitektur standar industri mengombinasikan GRE dengan IPsec melalui mode **GRE over IPsec**:
+1. **Phase 1 ISAKMP / IKE**: Menegosiasikan kanal manajemen yang aman dan pertukaran kunci Diffie-Hellman antara kedua router.
+2. **Phase 2 IPsec SA & Transform Set**: Menggunakan protokol ESP (*Encapsulating Security Payload* - IP Protocol 50) dengan algoritma enkripsi kuat (misalnya AES-256) dan fungsi hash integritas (misalnya SHA-256).
+3. Paket GRE yang keluar dari `Tunnel0` akan dicegat oleh modul IPsec (Crypto Map atau IPsec Profile), lalu dienkripsi secara penuh ke dalam paket ESP sebelum dikirimkan ke jaringan luar. Dengan arsitektur ini, seluruh data privat internal terlindungi sepenuhnya dari ancaman penyadapan maupun pemalsuan data.
+
+---
+
+## 7. Dynamic Routing OSPF & Redundancy Test
+
+### 7.1 Ketentuan & Berkas Kerja Terpisah
+Ketentuan Soal 7 mewajibkan pengerjaan dilakukan pada file terpisah hasil salinan file utama:
+- **Nama File Terpisah**: `Networking-ETS-K-08-OSPF.pkt`
+- **Tujuan**: Mengganti perutean statis antar-router dengan protokol perutean dinamis OSPFv2 (Single Area, Area 0), serta menguji mekanisme toleransi kesalahan (*fault-tolerance/redundancy*) jika salah satu jalur backbone terputus.
+
+### 7.2 Penambahan Link Cadangan L7 (R-DC <-> R-UTARA)
+Untuk menyediakan redundansi jalur, ditambahkan satu tautan darurat L7 yang menghubungkan **R-DC** dan **R-UTARA**:
+1. **Pemasangan Modul Serial**: Modul `HWIC-2T` (2-port Serial WAN) dipasang pada slot HWIC `0/0` di R-DC dan R-UTARA.
+2. **Pengkabelan**: Menggunakan kabel Serial DCE/DTE antara `R-DC:Serial0/0/0` dan `R-UTARA:Serial0/0/0`.
+3. **Alokasi Subnet Baru**: Dipilih subnet baru yang belum digunakan dalam rancangan VLSM sebelumnya:
+   - Subnet: `10.65.208.24/30` (Netmask `255.255.255.252`)
+   - IP `R-DC:Serial0/0/0`: `10.65.208.25/30` (Clock Rate 64000 DCE)
+   - IP `R-UTARA:Serial0/0/0`: `10.65.208.26/30`
+
+### 7.3 Konfigurasi OSPF Area 0 pada Ke-7 Router
+Seluruh static route antar-router pada file utama dihapus, lalu dikonfigurasikan OSPF Process ID 1 dalam **Area 0**.
+
+#### 1. Ketentuan Passive Interface
+Sesuai instruksi soal, router **dilarang mengirimkan pesan OSPF (Hello/LSA) ke arah LAN pengguna**. Hal ini diimplementasikan menggunakan perintah `passive-interface` pada setiap sub-interface yang mengarah ke LAN:
+- Mencegah *security risk* (mencegah penyerang di LAN memalsukan OSPF neighbor/rute palsu).
+- Menghemat *bandwidth* dan beban CPU perangkat pengguna (menghindari paket broadcast/multicast OSPF yang tidak diperlukan).
+
+#### 2. Ketentuan Default Route OSPF
+- R-PUSAT adalah satu-satunya router yang mengonfigurasi default route statis ke internet (`ip route 0.0.0.0 0.0.0.0 203.0.113.6`).
+- Di bawah konfigurasi OSPF R-PUSAT, diaktifkan perintah:
+  ```cisco
+  router ospf 1
+   default-information originate
+  ```
+- Perintah ini secara otomatis menyebarkan rute default bertipe **O*E2** (OSPF External Type 2) ke seluruh 6 router cabang (R-DC, R-UTARA, R-PELABUHAN, R-SELATAN, R-TIMUR, R-BARAT), sehingga router-router tersebut tidak memerlukan default route manual.
+
+#### 3. Rincian Konfigurasi OSPF Tiap Router
+
+| Router | Router-ID | Network yang Di-advertise (Area 0) | Passive Interface |
+|---|---|---|---|
+| **R-PUSAT** | `1.1.1.1` | `10.65.208.0 0.0.0.3` (L1)<br>`10.65.208.4 0.0.0.3` (L2)<br>`10.65.208.8 0.0.0.3` (L3)<br>`10.65.208.12 0.0.0.3` (L4)<br>`10.65.208.16 0.0.0.3` (L5)<br>`10.65.192.0 0.0.7.255` (LAN Balai Kota)<br>`10.65.200.0 0.0.0.31` (LAN Server Balai Kota) | `GigabitEthernet0/2.10`<br>`GigabitEthernet0/2.20` |
+| **R-DC** | `2.2.2.2` | `10.65.208.0 0.0.0.3` (L1)<br>`10.65.208.24 0.0.0.3` (L7 Serial)<br>`10.64.128.0 0.0.31.255` (CCTV)<br>`10.64.160.0 0.0.0.255` (Storage DC) | `GigabitEthernet0/1.10`<br>`GigabitEthernet0/1.20` |
+| **R-UTARA** | `3.3.3.3` | `10.65.208.4 0.0.0.3` (L2)<br>`10.65.208.20 0.0.0.3` (L6)<br>`10.65.208.24 0.0.0.3` (L7 Serial)<br>`10.64.0.0 0.0.63.255` (WiFi Utara)<br>`10.64.64.0 0.0.1.255` (Sensor Utara) | `GigabitEthernet0/1.10`<br>`GigabitEthernet0/1.20` |
+| **R-PELABUHAN** | `4.4.4.4` | `10.65.208.20 0.0.0.3` (L6)<br>`10.64.192.0 0.0.31.255` (SCADA Pelabuhan)<br>`10.64.224.0 0.0.0.127` (Kantor Pelabuhan) | `GigabitEthernet0/1.10`<br>`GigabitEthernet0/1.20` |
+| **R-SELATAN** | `5.5.5.5` | `10.65.208.8 0.0.0.3` (L3)<br>`10.65.0.0 0.0.31.255` (WiFi Selatan)<br>`10.65.32.0 0.0.0.127` (PJU Selatan) | `GigabitEthernet0/1.10`<br>`GigabitEthernet0/1.20` |
+| **R-TIMUR** | `6.6.6.6` | `10.65.208.12 0.0.0.3` (L4)<br>`10.65.64.0 0.0.31.255` (WiFi Timur)<br>`10.65.96.0 0.0.3.255` (Sensor Timur) | `GigabitEthernet0/1.10`<br>`GigabitEthernet0/1.20` |
+| **R-BARAT** | `7.7.7.7` | `10.65.208.16 0.0.0.3` (L5)<br>`10.65.128.0 0.0.31.255` (WiFi Barat)<br>`10.65.160.0 0.0.0.255` (Puskesmas Barat) | `GigabitEthernet0/0.10`<br>`GigabitEthernet0/0.20` |
+
+### 7.4 Verifikasi Status OSPF
+#### 1. OSPF Neighbor Adjacency di R-DC
+```cisco
+R-DC#show ip ospf neighbor
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+1.1.1.1           1   FULL/BDR        00:00:33    10.65.208.1     GigabitEthernet0/0
+3.3.3.3           0   FULL/  -        00:00:38    10.65.208.26    Serial0/0/0
+```
+*Terlihat R-DC membentuk hubungan ketetanggaan `FULL` ke R-PUSAT via GigabitEthernet0/0 dan ke R-UTARA via Serial0/0/0.*
+
+#### 2. Penerimaan Default Route OSPF di Router Cabang
+Contoh pada `R-BARAT`:
+```cisco
+R-BARAT#show ip route ospf
+     10.0.0.0/8 is variably subnetted, 17 subnets, 9 masks
+O       10.64.0.0/18 [110/3] via 10.65.208.17, GigabitEthernet0/1
+O       10.64.128.0/19 [110/3] via 10.65.208.17, GigabitEthernet0/1
+O       10.64.160.0/24 [110/3] via 10.65.208.17, GigabitEthernet0/1
+O       10.65.192.0/21 [110/2] via 10.65.208.17, GigabitEthernet0/1
+O       10.65.200.0/27 [110/2] via 10.65.208.17, GigabitEthernet0/1
+O*E2 0.0.0.0/0 [110/1] via 10.65.208.17, 00:04:12, GigabitEthernet0/1
+```
+*Tanda `O*E2 0.0.0.0/0` membuktikan bahwa R-BARAT menerima default route secara dinamis dari R-PUSAT tanpa perlu konfigurasi statis manual.*
+
+### 7.5 Uji Redundansi & Failover Jalur Backbone
+Untuk membuktikan ketahanan sistem jaringan dinamis (*fault-tolerance*), dilakukan pengujian failover:
+
+#### 1. Kondisi Normal (Link L1 Aktif)
+Pada kondisi normal, jalur komunikasi dari **Command Center (R-DC)** menuju **Balai Kota (R-PUSAT)** melewati link utama L1:
+```text
+PC>tracert 10.65.192.2
+  1   10.64.160.1 (Gateway R-DC)
+  2   10.65.208.1 (R-PUSAT via GigabitEthernet0/0)
+  3   10.65.192.2 (PC-PEGAWAI-BALAIKOTA)
+```
+
+#### 2. Simulasi Kegagalan Link Backbone (Link L1 Putus)
+Interface utama `GigabitEthernet0/0` pada R-DC dipadamkan (`shutdown`) untuk menyimulasikan kabel backbone L1 putus:
+```cisco
+R-DC(config)#interface GigabitEthernet0/0
+R-DC(config-if)#shutdown
+```
+**Reaksi Protokol OSPF**:
+1. Hubungan tetangga (*neighbor adjacency*) antara R-DC dan R-PUSAT via `GigabitEthernet0/0` langsung terputus (*DOWN*).
+2. OSPF segera membangkitkan *Link State Update* (LSU) dan menjalankan algoritma Shortest Path First (SPF Dijkstra).
+3. Jalur alternatif ditemukan secara otomatis melalui link cadangan **L7** (`Serial0/0/0`) menuju **R-UTARA**, kemudian melewati **L2** menuju **R-PUSAT**.
+
+#### 3. Hasil Pengujian Konektivitas Saat Link L1 Putus
+- Uji Ping dari `SRV-STORAGE-DC` (`10.64.160.2`) ke `PC-PEGAWAI-BALAIKOTA` (`10.65.192.2`): **Success (Loss 0%)**.
+- Uji Ping ke Server Internet `8.8.8.8`: **Success (Loss 0%)**.
+- Hasil `tracert` dari `SRV-STORAGE-DC` ke `PC-PEGAWAI-BALAIKOTA`:
+```text
+PC>tracert 10.65.192.2
+Tracing route to 10.65.192.2 over a maximum of 30 hops: 
+
+  1   0 ms      0 ms      0 ms      10.64.160.1
+  2   0 ms      0 ms      0 ms      10.65.208.26
+  3   0 ms      0 ms      0 ms      10.65.208.5
+  4   0 ms      0 ms      0 ms      10.65.192.2
+
+Trace complete.
+```
+**Analisis Failover**:
+- **Hop 1** (`10.64.160.1`): Gateway R-DC.
+- **Hop 2** (`10.65.208.26`): R-UTARA melalui link darurat Serial L7 (`10.65.208.24/30`).
+- **Hop 3** (`10.65.208.5`): R-PUSAT melalui link Gigabit L2.
+- **Hop 4** (`10.65.192.2`): Tujuan akhir di Balai Kota.
+
+#### 4. Pemulihan Jalur (*Recovery*)
+Saat kabel L1 diaktifkan kembali (`no shutdown` pada `GigabitEthernet0/0`), OSPF mendeteksi kembalinya link Gigabit yang memiliki metrik *cost* lebih rendah daripada link Serial, dan secara otomatis memindahkan lalu lintas kembali ke jalur utama L1 tanpa ada gangguan koneksi.
+
