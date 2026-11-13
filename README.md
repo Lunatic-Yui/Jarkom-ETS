@@ -452,6 +452,10 @@ Uji konektivitas dilakukan menggunakan pengujian `ping` antar-perangkat di berba
 
 Dengan konfigurasi ini, seluruh segmen jaringan privat kota terhubung penuh tanpa memerlukan dynamic routing protocol pada file utama ini.
 
+Bukti tabel static route pada R-PUSAT:
+
+![Static route R-PUSAT](./assets/bukti/Keisya/03-static-route-r-pusat.png)
+
 ---
 
 ## 5. Network Address Translation (NAT)
@@ -532,6 +536,18 @@ icmp 203.0.113.33:3     10.64.224.2:3      8.8.8.8:3          8.8.8.8:3
 ```
 Seluruh alamat IP privat berhasil ditranslasikan ke alamat publik tunggal `203.0.113.33` dengan pemetaan nomor port unik (PAT).
 
+Bukti dari file Packet Tracer yang dipakai:
+
+![Routing table Router-ISP](./assets/bukti/Keisya/05-rute-router-isp.png)
+
+Tabel Router-ISP hanya berisi jaringan `8.8.8.0/24` dan `203.0.113.32/30`. Setelah rute privat dihapus, ping dari PC Balai Kota ke `8.8.8.8` tetap berhasil 4/4.
+
+![Ping PC Balai Kota ke internet](./assets/bukti/Keisya/05-ping-internet.png)
+
+Konfigurasi NAT outside, NAT inside, dan perintah overload pada R-PUSAT:
+
+![Konfigurasi NAT PAT R-PUSAT](./assets/bukti/Keisya/05-nat-pat-r-pusat.png)
+
 ---
 
 ## 6. Tunnel GRE
@@ -587,6 +603,10 @@ Trace complete.
 - **Hop 1** (`10.65.192.1`): Default gateway di R-PUSAT (sub-interface `Gi0/2.10`).
 - **Hop 2** (`192.168.8.2`): Ujung tunnel GRE di R-PELABUHAN. Router perantara transit (**R-UTARA**) tidak muncul dalam daftar hop karena paket privat dienkapsulasi ke dalam payload paket GRE dan secara logis diteruskan langsung antar-ujung tunnel (*virtual point-to-point link*).
 - **Hop 3** (`10.64.224.2`): Host tujuan di Kantor Pelabuhan.
+
+Status `Tunnel0` pada R-PUSAT juga sudah `up/up` dengan alamat `192.168.8.1/30`:
+
+![Status Tunnel0 R-PUSAT](./assets/bukti/Keisya/06-tunnel-gre-r-pusat.png)
 
 ### 6.4 Analisis & Penjelasan Teori
 
@@ -684,6 +704,14 @@ O*E2 0.0.0.0/0 [110/1] via 10.65.208.17, 00:04:12, GigabitEthernet0/1
 ```
 *Tanda `O*E2 0.0.0.0/0` membuktikan bahwa R-BARAT menerima default route secara dinamis dari R-PUSAT tanpa perlu konfigurasi statis manual.*
 
+Bukti neighbor dan rute OSPF pada file `K08_CIDR_OSPF.pkt`:
+
+![Neighbor OSPF R-PUSAT](./assets/bukti/Keisya/07-ospf-neighbor-r-pusat.png)
+
+![Rute OSPF](./assets/bukti/Keisya/07-rute-ospf.png)
+
+![Default route OSPF](./assets/bukti/Keisya/07-default-route-ospf.png)
+
 ### 7.5 Uji Redundansi & Failover Jalur Backbone
 Untuk membuktikan ketahanan sistem jaringan dinamis (*fault-tolerance*), dilakukan pengujian failover:
 
@@ -728,8 +756,16 @@ Trace complete.
 - **Hop 3** (`10.65.208.5`): R-PUSAT melalui link Gigabit L2.
 - **Hop 4** (`10.65.192.2`): Tujuan akhir di Balai Kota.
 
+Screenshot berikut diambil saat `GigabitEthernet0/0` R-DC dimatikan. Neighbor ke R-PUSAT turun, tetapi neighbor `3.3.3.3` melalui `Serial0/0/0` tetap `FULL`. Rute `10.65.192.0/21` berpindah ke `10.65.208.26` dan ping berhasil 5/5.
+
+![Uji failover OSPF melalui L7](./assets/bukti/Keisya/07-ospf-failover-l7.png)
+
 #### 4. Pemulihan Jalur (*Recovery*)
 Saat kabel L1 diaktifkan kembali (`no shutdown` pada `GigabitEthernet0/0`), OSPF mendeteksi kembalinya link Gigabit yang memiliki metrik *cost* lebih rendah daripada link Serial, dan secara otomatis memindahkan lalu lintas kembali ke jalur utama L1 tanpa ada gangguan koneksi.
+
+Setelah menunggu konvergensi, neighbor ke R-PUSAT dan R-UTARA kembali berstatus `FULL`:
+
+![Pemulihan neighbor OSPF](./assets/bukti/Keisya/07-ospf-recovery.png)
 
 ---
 
