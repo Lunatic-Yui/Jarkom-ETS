@@ -2,11 +2,11 @@
 
 ## Member
 
-| Nama                          | NRP        | Pembagian Kerja                |
-| ----------------------------- | ---------- | ------------------------------ |
-| Yovi Prayudya Rizky Ramadhani | 5027251107 | No 1, 2, dan 4 point 1         |
-| Keisya                        | 5027251068 | No 3, 5, 6, dan 7              |
-| Askhabul                      | 5027251049 | No 4.2, 4.3, dan 8             |
+| Nama                          | NRP        | Peran & Pembagian Kerja                                                                 |
+| ----------------------------- | ---------- | --------------------------------------------------------------------------------------- |
+| Yovi Prayudya Rizky Ramadhani | 5027251107 | **A - Arsitek Dasar & Pengalamatan**: Excel VLSM/CIDR + tabel revisi, topologi CPT, IP dasar |
+| Askhabul                      | 5027251049 | **B - Spesialis Rute & Keamanan**: static routing, NAT, GRE, OSPF + link cadangan L7     |
+| Keisya                        | 5027251068 | **C - SysAdmin & Dokumentasi**: DHCP (PC & CCTV), layanan aplikasi, README, bukti, laporan |
 
 ## Laporan
 

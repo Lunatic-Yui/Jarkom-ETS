@@ -99,3 +99,40 @@ Saat ini DNS hanya aktif di SRV-BALAIKOTA. SRV-STORAGE-DC memakai
 `10.65.200.2` sebagai DNS client. Kalau dosen menafsirkan DNS harus ada di
 kedua server, SRV-STORAGE-DC perlu ditambah layanan DNS dengan record yang
 sama.
+
+## Pembagian resmi A / B / C
+
+| Anggota | Peran | Pekerjaan |
+|---|---|---|
+| Yovi (5027251107) | A - Arsitek Dasar & Pengalamatan | Excel VLSM/CIDR + tabel revisi, topologi CPT, penamaan, label, IP dasar |
+| Askhabul (5027251049) | B - Spesialis Rute & Keamanan | Static routing, NAT, Tunnel GRE, file OSPF + L7 |
+| Keisya (5027251068) | C - SysAdmin & Dokumentasi | DHCP PC & CCTV, DNS/web/FTP/email, README, bukti, laporan |
+
+Urutan video tetap 0-9, pembicara mengikuti pemilik pekerjaan:
+
+| Bagian | Menit | Pembicara |
+|---|---|---|
+| 0 Pembukaan | 1 | A |
+| 1 Topologi | 2 | A |
+| 2 Subnetting | 2 | A |
+| 3 Static routing | 4 | B |
+| 4 DHCP | 3 | C |
+| 5 NAT | 2 | B |
+| 6 Tunnel GRE | 3 | B |
+| 7 OSPF & failover | 5 | B |
+| 8 Layanan aplikasi | 5 | C |
+| 9 Penutup | 3 | C |
+
+Total 30 menit. Urutan bagian tidak diacak; hanya pembicara yang bergantian
+karena pembagian kerja tidak berbentuk blok.
+
+## Kendala verifikasi langsung 13 November 2026 malam
+
+Packet Tracer 9.0.1 saat dibuka ulang meminta login Cisco Networking Academy.
+Login sebelumnya sudah kedaluwarsa, sehingga jendela utama tidak bisa
+dioperasikan sampai pemilik akun login. File tetap bisa dibuka (topologi
+tampil normal), jadi berkas `.pkt` tidak rusak.
+
+Yang belum bisa dijalankan ulang malam ini: perubahan domain, uji ping
+menyeluruh, dan tangkapan layar baru. Bukti yang sudah ada diambil dari file
+yang sama pada 13 November pagi/siang, jadi masih sah.
