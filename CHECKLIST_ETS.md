@@ -63,3 +63,39 @@ Ditinjau ulang 13 November 2026 terhadap soal 1, 2, dan 4 yang tersedia di
   pada R-PUSAT tetap bekerja.
 - Menyelaraskan label WAN OSPF menjadi `203.0.113.32/30`.
 - Memperbaiki record DNS/HTTP OSPF dan mask pool PJU menjadi `/25`.
+
+## Audit terhadap lembar soal asli (13 November 2026)
+
+Lembar soal lengkap sudah dicek. Ada empat hal yang belum sesuai dan harus
+dibereskan sebelum deadline 15 November 2026, 23.59 WIB.
+
+| No | Temuan | Dampak | Status |
+|---|---|---|---|
+| 1 | Domain layanan masih `k8.local` / `k8.com`, padahal soal mewajibkan `k8.smartcity.lab` | Poin Soal 8 (15) bisa hilang | Belum diperbaiki |
+| 2 | Halaman web berjudul "Pemerintah Kota - Kelompok 8", belum "Portal Smart City Surabaya" | Tidak sesuai kalimat soal | Belum diperbaiki |
+| 3 | Video demo 30 menit (bagian 0-9) belum ada | Syarat output + 25 poin demo | Belum |
+| 4 | Nama ZIP masih memakai NRP lengkap; format wajib 3 angka terakhir tiap NRP | Berkas bisa ditolak | Belum diperbaiki |
+
+Yang sudah sesuai dengan lembar soal:
+
+- WAN `203.0.113.32/30` (K=8, `203.0.113.(4x8)`), R-PUSAT `.33`, R-ISP `.34`.
+- Server internet `8.8.8.0/24`, gateway `8.8.8.1` di R-ISP.
+- Tunnel `192.168.8.0/30`, R-PUSAT `.1`, R-PELABUHAN `.2`.
+- Gateway tiap LAN memakai host pertama (`.1`).
+- Static route R-PUSAT ke seluruh LAN R-DC, R-UTARA, R-PELABUHAN,
+  R-SELATAN, R-TIMUR, R-BARAT; R-UTARA ke kedua LAN R-PELABUHAN.
+- Default route hanya mengarah ke router di atasnya.
+- Perangkat pengguna DHCP lengkap gateway + DNS; CCTV lewat DHCP relay ke
+  SRV-STORAGE-DC.
+- NAT overload ke `203.0.113.33`; R-ISP tanpa rute privat.
+- GRE membawa trafik Balai Kota-Pelabuhan; `Tunnel0` up/up.
+- OSPF Area 0, L7 cadangan, passive interface LAN, default originate.
+- Failover L1 terbukti (rute pindah ke Serial L7, ping 5/5) dan recovery
+  kembali `FULL`.
+- Spreadsheet berisi tabel kebutuhan, revisi VLSM, dan supernet per router.
+
+Catatan tambahan: Soal 8 menyebut "DNS di LAN Server dan Storage DC".
+Saat ini DNS hanya aktif di SRV-BALAIKOTA. SRV-STORAGE-DC memakai
+`10.65.200.2` sebagai DNS client. Kalau dosen menafsirkan DNS harus ada di
+kedua server, SRV-STORAGE-DC perlu ditambah layanan DNS dengan record yang
+sama.
