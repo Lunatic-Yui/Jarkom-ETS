@@ -62,8 +62,8 @@ Soal tidak menulis "Surabaya Selatan". Diagram acuan memakai nama `R-SELATAN`, W
 | Anggota | Peran | Pekerjaan |
 |---|---|---|
 | Yovi (5027251107) | A - Topologi dan subnetting | Topologi CPT, VLSM/CIDR, tabel revisi, penamaan, label, IP dasar, serta video bagian 0-2 |
-| Askhabul (5027251049) | B - Routing dan keamanan | Static routing, NAT, GRE, OSPF, L7, failover, serta video bagian 3, 5, 6, dan 7 |
-| Keisya (5027251068) | C - DHCP dan layanan | DHCP PC/CCTV, DNS, web, FTP, email, serta video bagian 4, 8, dan 9 |
+| Askhabul (5027251049) | B - Routing dan DHCP | Static routing, DHCP PC/CCTV, NAT, GRE, serta video bagian 3-6 |
+| Keisya (5027251068) | C - OSPF dan layanan | OSPF, L7, failover, DNS, web, FTP, email, serta video bagian 7-9 |
 
 README, laporan, bukti, dan persiapan video dikerjakan bersama. Tiap anggota menulis dan mengecek bagian yang menjadi tugasnya.
 
@@ -75,16 +75,16 @@ README, laporan, bukti, dan persiapan video dikerjakan bersama. Tiap anggota men
 | 1 Topologi | 2 | A |
 | 2 Subnetting | 2 | A |
 | 3 Static routing | 4 | B |
-| 4 DHCP | 3 | C |
+| 4 DHCP | 3 | B |
 | 5 NAT | 2 | B |
 | 6 Tunnel GRE | 3 | B |
-| 7 OSPF dan failover | 5 | B |
+| 7 OSPF dan failover | 5 | C |
 | 8 Layanan aplikasi | 5 | C |
 | 9 Penutup | 3 | C |
 
 Total 30 menit.
 
-Urutan pembicara mengikuti nomor bab, bukan blok per anggota. Karena itu setelah bagian 4 oleh C, bagian 5-7 kembali ke B, lalu bagian 8-9 dilanjutkan C.
+Pembicara dibagi berurutan: A untuk bagian 0-2, B untuk bagian 3-6, dan C untuk bagian 7-9.
 
 ## Catatan DNS
 

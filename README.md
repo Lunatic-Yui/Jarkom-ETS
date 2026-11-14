@@ -5,8 +5,8 @@
 | Nama | NRP | Peran & Pembagian Kerja |
 |---|---|---|
 | Yovi Prayudya Rizky Ramadhani | 5027251107 | **A - Topologi dan subnetting**: topologi CPT, VLSM/CIDR, tabel revisi, penamaan, label, dan IP dasar. Menjelaskan video bagian 0-2. |
-| Askhabul | 5027251049 | **B - Routing dan keamanan**: static routing, NAT, GRE, OSPF, link L7, dan failover. Menjelaskan video bagian 3, 5, 6, dan 7. |
-| Keisya | 5027251068 | **C - DHCP dan layanan**: DHCP PC/CCTV serta DNS, web, FTP, dan email. Menjelaskan video bagian 4, 8, dan 9. |
+| Askhabul | 5027251049 | **B - Routing dan DHCP**: static routing, DHCP PC/CCTV, NAT, dan GRE. Menjelaskan video bagian 3-6. |
+| Keisya | 5027251068 | **C - OSPF dan layanan**: OSPF, link L7, failover, DNS, web, FTP, dan email. Menjelaskan video bagian 7-9. |
 
 README, laporan, bukti, dan persiapan video dikerjakan bersama. Tiap anggota menulis dan mengecek bagian yang menjadi tugasnya.
 
