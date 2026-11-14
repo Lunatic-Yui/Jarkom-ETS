@@ -324,6 +324,7 @@ Setiap lokasi punya dua LAN, sedangkan router 2911 hanya punya tiga port Gigabit
 - **Satu switch 2960-24TT** di bawah router. Satu kabel dari router ke switch membawa dua VLAN (trunk): VLAN 10 untuk LAN pertama dan VLAN 20 untuk LAN kedua. Switch 2960 dipilih dibanding Switch-PT karena VLAN dan trunk bisa dikonfigurasi lewat CLI.
 - **Router-on-a-stick**: router memakai dua sub-interface (`.10` dan `.20`) dengan `encapsulation dot1Q`, sehingga satu port router cukup untuk dua subnet dan port lainnya tersisa untuk link backbone.
 - **Satu perangkat perwakilan per LAN**, sesuai ketentuan soal.
+
 | Lokasi | Router | Switch | LAN 1 (VLAN 10) | LAN 2 (VLAN 20) |
 |---|---|---|---|---|
 | Balai Kota | R-PUSAT | SW-BALAIKOTA | PC-PEGAWAI-BALAIKOTA (PC) | SRV-BALAIKOTA (server) |
