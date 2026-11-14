@@ -17,6 +17,27 @@ Kurang lebih topologinya seperti berikut:
 ![image](./assets/jawaban/topologi-soal-1-1.png)
 ![image](./assets/jawaban/topologi-soal-1-2.png)
 
+### Tampilan akhir topologi
+
+Tampilan akhir disimpan dalam dua viewport agar nama perangkat, label subnet,
+dan jalur kabel tetap terbaca tanpa saling menutupi.
+
+**CIDR - bagian atas**
+
+![Topologi CIDR bagian atas](./assets/jawaban/topologi-cidr-atas-rapi.png)
+
+**CIDR - bagian bawah**
+
+![Topologi CIDR bagian bawah](./assets/jawaban/topologi-cidr-bawah-rapi.png)
+
+**OSPF - bagian atas**
+
+![Topologi OSPF bagian atas](./assets/jawaban/topologi-ospf-atas-rapi.png)
+
+**OSPF - bagian bawah**
+
+![Topologi OSPF bagian bawah](./assets/jawaban/topologi-ospf-bawah-rapi.png)
+
 Kelompok kami memilih skema CIDR karena tiga alasan. Pertama, setiap router mendapat satu blok besar (summary), jadi tabel rute di R-PUSAT cukup satu entri per router, bukan satu entri per LAN. Kedua, blok besar itu masih bisa dipecah menjadi subnet /30 untuk link antar-router, sehingga penambahan link seperti L7 pada soal 7 tidak perlu menggeser alamat LAN yang sudah dipakai. Ketiga, batas blok per router memudahkan pembagian kerja dan pengecekan siapa mengerjakan bagian mana. Rincian blok ada di sheet `Revisi CIDR`, sedangkan tabel VLSM dipakai sebagai pembanding jawaban UTS.
 
 R-ISP
@@ -785,6 +806,14 @@ Layanan ditempatkan pada dua server sesuai perannya. Pengujian di bawah ini dija
 - HTTP aktif dan menampilkan halaman "Portal Smart City Surabaya" dengan nomor kelompok 8.
 - Pengujian `http://www.k8.smartcity.lab` dari PC klien berhasil, sekaligus membuktikan resolusi DNS dan HTTP.
 
+**Bukti record DNS aktif**
+
+![Record DNS k8.smartcity.lab](./assets/bukti/Keisya/11-dns-records-k8-smartcity-lab.png)
+
+**Bukti akses web melalui nama domain**
+
+![Portal Smart City Surabaya](./assets/bukti/Keisya/08-web-portal-smart-city.png)
+
 ### 8.2 SRV-STORAGE-DC - DHCP CCTV, FTP, dan Email
 
 - IP statis: `10.64.160.2/24`, gateway `10.64.160.1`, DNS `10.65.200.2`.
@@ -792,13 +821,29 @@ Layanan ditempatkan pada dua server sesuai perannya. Pengujian di bawah ini dija
 - FTP aktif dengan akun `admin-k8`; hak akses baca/tulis/list/delete/rename telah diaktifkan. Login dan perintah `dir` berhasil dari PC Balai Kota.
 - Email memakai domain `k8.smartcity.lab`, akun `admin@k8.smartcity.lab` dan `petugas@k8.smartcity.lab`. Pengujian SMTP/POP3 dari petugas ke admin berhasil.
 
+**Bukti DHCP CCTV**
+
+![DHCP CCTV dari SRV-STORAGE-DC](./assets/bukti/OSPF/02-dhcp-cctv-helper.png)
+
+**Bukti login dan daftar direktori FTP**
+
+![FTP login dan dir berhasil](./assets/bukti/CIDR/05-ftp-login-dir-success.png)
+
+**Bukti kirim email melalui SMTP**
+
+![Kirim email k8.smartcity.lab](./assets/bukti/Keisya/09-email-send-k8-smartcity-lab.png)
+
+**Bukti penerimaan email melalui POP3**
+
+![Terima email k8.smartcity.lab](./assets/bukti/Keisya/10-email-receive-k8-smartcity-lab.png)
+
 ### 8.3 Hasil uji CIDR dan OSPF
 
-Implementasi layanan yang sama tersedia pada `K08_CIDR.pkt` dan `K08_CIDR_OSPF.pkt`. Pengujian mencakup DHCP, DNS/HTTP, FTP, email, ping antar-LAN, dan ping internet `8.8.8.8`. Pada berkas OSPF, seluruh adjacency R-PUSAT mencapai keadaan `FULL`, semua LAN cabang muncul sebagai rute `O`, dan default route menuju ISP adalah `203.0.113.34`.
-
-Bukti OSPF tersimpan di `assets/bukti/OSPF`.
+Pengujian layanan lengkap dijalankan pada `K08_CIDR.pkt`. DNS dan web dengan
+domain baru juga diterapkan pada `K08_CIDR_OSPF.pkt`. Bukti tambahan untuk
+DHCP, konektivitas, routing OSPF, dan akses internet tersedia di
+`assets/bukti/CIDR`, `assets/bukti/OSPF`, dan `assets/bukti/Keisya`.
 
 ## Checklist Akhir
 
 Status lengkap per nomor soal dan sisa pekerjaan ada di [CHECKLIST_ETS.md](./CHECKLIST_ETS.md).
-

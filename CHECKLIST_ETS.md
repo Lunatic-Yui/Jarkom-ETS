@@ -10,7 +10,7 @@ Classroom dan isi repo `Lunatic-Yui/Jarkom-ETS`.
 | 1 | Topologi CIDR sesuai Gambar 1, L1-L6, R-ISP, Server 8.8.8.8 | Selesai | `project/K08_CIDR.pkt`, `project/K08_CIDR_OSPF.pkt` |
 | 1 | Desain tiap lokasi (switch, VLAN, media, penambahan port) dijelaskan | Selesai | README bagian "Desain tiap lokasi", "Alasan pemilihan perangkat", "Penambahan port pada R-PUSAT" |
 | 1 | Nama perangkat diganti (R-PUSAT, SW-BALAIKOTA, PC-CCTV-KOTA, dst.) | Selesai | Terlihat pada tangkapan layar topologi |
-| 1 | Label tiap LAN berisi nama subnet, Network ID/prefix, jumlah host | Selesai, perlu cek visual akhir | Label terverifikasi: Pegawai Balai Kota, Server Balai Kota, Server dan Storage DC, Puskesmas dan Sekolah Barat, WiFi Publik Timur, PJU Selatan, WAN. Sisanya di luar viewport saat audit. |
+| 1 | Label tiap LAN berisi nama subnet, Network ID/prefix, jumlah host | Selesai | Seluruh label diperiksa dalam viewport atas dan bawah; bukti ada di `assets/jawaban/topologi-*-rapi.png` |
 | 2 | Tabel VLSM: subnet, network ID, prefix, host range, broadcast, gateway | Selesai | Sheet `Revisi VLSM`, 20 subnet termasuk L1-L6 |
 | 2 | Tabel CIDR (summary per router) | Selesai | Sheet `Revisi CIDR` |
 | 2 | Tabel revisi: jawaban UTS, perbaikan, alasan | Selesai | Baris "Kesalahan/Alasan" pada ketiga sheet |
@@ -33,22 +33,18 @@ Classroom dan isi repo `Lunatic-Yui/Jarkom-ETS`.
 | 8 | DNS + HTTP di SRV-BALAIKOTA | Selesai di `K08_CIDR.pkt` | 5 record `k8.smartcity.lab` (www, srv-balaikota, ftp, mail, srv-storage); record lama `k8.local` sudah dihapus |
 | 8 | Judul halaman web "Portal Smart City Surabaya" + nomor kelompok | Selesai | Tampil di `www.k8.smartcity.lab`, bukti `assets/bukti/Keisya/08-web-portal-smart-city.png` |
 | 8 | DHCP CCTV + FTP + Email di SRV-STORAGE-DC | Selesai di `K08_CIDR.pkt` | FTP `admin-k8`, domain email sudah `k8.smartcity.lab` |
-| 8 | Bukti layanan | Selesai | `assets/bukti/CIDR`, `assets/bukti/OSPF` |
+| 8 | Bukti layanan | Selesai | Bukti DNS, web, DHCP CCTV, FTP, kirim email, dan terima email ditampilkan langsung pada README bagian 8 |
 
 ## Yang belum selesai
 
 1. **Domain email di `K08_CIDR_OSPF.pkt`** masih `k8.com`, sedangkan record
    DNS sudah `mail.k8.smartcity.lab`. Ubah lewat Services > EMAIL pada
    SRV-STORAGE-DC, lalu simpan ulang berkas.
-2. **Video demonstrasi 30 menit** belum direkam dan diunggah.
-3. **Video demonstrasi 30 menit** belum direkam dan belum diunggah sebagai
+2. **Video demonstrasi 30 menit** belum direkam dan belum diunggah sebagai
    YouTube *unlisted*. Wajib diselesaikan pemilik akun.
-4. **ZIP final** harus dibuat ulang setiap kali README, bukti, atau link
+3. **ZIP final** harus dibuat ulang setiap kali README, bukti, atau link
    video berubah.
-5. **Cek visual label LAN** untuk 7 subnet yang belum masuk viewport saat
-   audit: CCTV, WiFi Utara, Sensor Utara, WiFi Selatan, WiFi Barat, Sensor
-   Banjir, SCADA/Kantor Pelabuhan.
-6. **Uji ulang setelah login**: DHCP 8 LAN + CCTV, matriks ping antar-LAN,
+4. **Uji ulang sebelum rekaman**: DHCP 8 LAN + CCTV, matriks ping antar-LAN,
    `show ip nat translations` saat ada trafik, `tracert` GRE, neighbor OSPF
    semua router, failover `ping -t` + `tracert`, lalu recovery.
 
@@ -56,7 +52,7 @@ Classroom dan isi repo `Lunatic-Yui/Jarkom-ETS`.
 
 - CIDR: `assets/bukti/CIDR` (10 gambar)
 - OSPF: `assets/bukti/OSPF` (13 gambar)
-- Bukti tambahan sesi 13 November: `assets/bukti/Keisya` (10 gambar)
+- Bukti tambahan sesi 13-14 November: `assets/bukti/Keisya` (11 gambar)
 
 ## Perbaikan 13 November 2026
 
