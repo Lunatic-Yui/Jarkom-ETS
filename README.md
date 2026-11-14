@@ -12,7 +12,7 @@
 
 ![image](./assets/soal/soal-1.png)
 
-Kurang lebih topologinya seperti berikut:
+Topologi acuan dari soal:
 
 ![image](./assets/jawaban/topologi-soal-1-1.png)
 ![image](./assets/jawaban/topologi-soal-1-2.png)
@@ -38,9 +38,9 @@ dan jalur kabel tetap terbaca tanpa saling menutupi.
 
 ![Topologi OSPF bagian bawah](./assets/jawaban/topologi-ospf-bawah-rapi.png)
 
-Kelompok kami memilih skema CIDR karena tiga alasan. Pertama, setiap router mendapat satu blok besar (summary), jadi tabel rute di R-PUSAT cukup satu entri per router, bukan satu entri per LAN. Kedua, blok besar itu masih bisa dipecah menjadi subnet /30 untuk link antar-router, sehingga penambahan link seperti L7 pada soal 7 tidak perlu menggeser alamat LAN yang sudah dipakai. Ketiga, batas blok per router memudahkan pembagian kerja dan pengecekan siapa mengerjakan bagian mana. Rincian blok ada di sheet `Revisi CIDR`, sedangkan tabel VLSM dipakai sebagai pembanding jawaban UTS.
+CIDR dipakai sebagai desain utama karena setiap router mendapat satu blok summary. Tabel rute R-PUSAT cukup memuat satu entri per router, sedangkan subnet `/30` untuk link antar-router tetap dapat diambil dari blok yang tersedia. Penambahan L7 juga tidak mengubah alamat LAN yang sudah digunakan. Rinciannya ada di sheet `Revisi CIDR`; tabel VLSM dipakai sebagai pembanding jawaban UTS.
 
-R-ISP
+### R-ISP
 ![image](./assets/jawaban/config/R-ISP-config.png)
 
 Router diberi nama `R-ISP` lewat `hostname`, lalu tiap interface diberi alamat IP beserta subnet mask-nya dan diaktifkan dengan `no shutdown`:
@@ -49,11 +49,11 @@ Router diberi nama `R-ISP` lewat `hostname`, lalu tiap interface diberi alamat I
 - `Gi0/1` dengan `8.8.8.1/24` ke Server 8.8.8.8, yang menjadi gateway server tersebut.
 Konfigurasi disimpan dengan `write memory`. R-ISP tidak diberi route ke alamat privat internal, sesuai ketentuan Soal 5.
 
-R-PUSAT
+### R-PUSAT
 
 ![image](./assets/jawaban/config/R-PUSAT-config.png)
 
-Nah disini sama seperti R-ISP untuk command ini dan menyimpannya melalui `write memory`. Setelah itu
+Konfigurasi R-PUSAT disimpan dengan `write memory` setelah seluruh interface aktif.
 
 ![image](./assets/jawaban/config/R-PUSAT-config-1.png)
 ![image](./assets/jawaban/config/R-PUSAT-config-2.png)
@@ -65,25 +65,25 @@ Konfigurasi R-PUSAT terdiri dari tiga bagian:
 3. **Link L2 sampai L5 lewat modul HWIC-4ESW**: tiap port dijadikan access port di VLAN 12 sampai 15, lalu alamat link /30 dipasang di `interface vlan 12` sampai `interface vlan 15`.
 
 
-Untuk sisanya:
+Konfigurasi router cabang:
 
-R-SELATAN
+**R-SELATAN**
 
 ![image](./assets/jawaban/config/R-SELATAN-config.png)
 
-R-TIMUR
+**R-TIMUR**
 
 ![image](./assets/jawaban/config/R-TIMUR-config.png)
 
-R-BARAT
+**R-BARAT**
 
 ![image](./assets/jawaban/config/R-BARAT-config.png)
 
-R-UTARA
+**R-UTARA**
 
 ![image](./assets/jawaban/config/R-UTARA-config.png)
 
-R-PELABUHAN
+**R-PELABUHAN**
 
 ![image](./assets/jawaban/config/R-PELABUHAN-config.png)
 
@@ -91,36 +91,36 @@ R-DC
 
 ![image](./assets/jawaban/config/R-DC-config.png)
 
-sesuai dengan konfigurasi pada R-PUSAT tersebut untuk terhubung dengan ip address yang sudah di set beserta subnet masknya. Nah karena antar router sudah di set dengan konfigurasi tersebut maka lanjut ke switch agar bisa terhubung menuju ke router sebagai gatewaynya. Seperti berikut:
+Setelah IP dan subnet mask pada seluruh router selesai, SW-BALAIKOTA dikonfigurasi agar perangkat LAN dapat memakai R-PUSAT sebagai gateway.
 
 ![image](./assets/jawaban/config/SW-BALAIKOTA-config.png)
 
-Namun disini ada kerusakan yang dimana ketika `show interfaces trunk` dijalankan, tidak muncul output yang kami inginkan. Maka dari itu perbaikannya sebagai berikut
+Output `show interfaces trunk` awalnya belum menampilkan trunk. Konfigurasi port kemudian diperbaiki seperti pada gambar berikut.
 
 ![image](./assets/jawaban/config/SW-BALAIKOTA-config-fix-broken.png)
 
-dengan melihat status pada interfacesnya tersebut lalu mendaftarkan ke `configure terminal` setelah itu hasilnya sebagai berikut:
+Status interface diperiksa, lalu port didaftarkan ulang melalui mode konfigurasi.
 
 ![image](./assets/jawaban/config/SW-BALAIKOTA-result.png)
 
-lalu lanjut ke server PT balaikota, config:
+Konfigurasi SRV-BALAIKOTA:
 
 ![image](./assets/jawaban/config/server-balaikota.png)
 
-dengan configurasi:
+Alamat yang digunakan:
 - IPv4 Address: 10.65.200.2
 - Subnet Mask: 255.255.255.224
 - Default Gateway: 10.65.200.1
 
-dan di ping...
+Pengujian ping awal:
 
 ![image](./assets/jawaban/error/ping-error-server-balaikota.png)
 
-Dan ternyata kesalahannya di:
+Letak kesalahan:
 
 ![image](./assets/jawaban/error/error-location-server-balaikota.png)
 
-pada Port Fa0/1 terakhir belum diforward maka dari itu ditambahkan sebagai berikut:
+Port Fa0/1 belum menjadi trunk. Konfigurasinya diperbaiki dengan perintah berikut:
 
 ```
 SW-BALAIKOTA(config)#interface fa0/1
@@ -134,13 +134,13 @@ SW-BALAIKOTA(config-if)# switchport mode access
 SW-BALAIKOTA(config-if)# switchport access vlan 20
 ```
 
-Setelah di `write memory` tersebut maka bisa send ping requestnya ini
+Setelah konfigurasi disimpan dengan `write memory`, ping berhasil.
 
 ![image](./assets/jawaban/error/fix-error-server-balaikota.png)
 
-Sisanya juga sama
+Konfigurasi lokasi lain menggunakan pola VLAN dan trunk yang sama.
 
-DC
+### Command Center / DC
 
 ![image](./assets/jawaban/config/R-DC-config-lanjutan.png)
 
@@ -164,21 +164,21 @@ end
 write memory
 ```
 
-Ini akan menuliskannya port dari 2 perangkat ini ke vlannya untuk menghindari kesalahan memasukkan port yang salah. Maka dari itu penting untuk dikelompokkan. Hasilnya sebagai berikut
+Fa0/1 dan Fa0/2 ditempatkan pada VLAN yang berbeda agar CCTV dan server tidak masuk ke segmen yang salah.
 
 ![image](./assets/jawaban/config/sw-dc-config.png)
 
-Dan juga menyetting ip address, subnet mask, dan ip gateway pada `server dan storage DC`:
+IP address, subnet mask, dan gateway SRV-STORAGE-DC:
 
 ![image](./assets/jawaban/config/setup-config-server-dc.png)
 
-hasilnya sebagai berikut:
+Hasil pengujian:
 
 ![image](./assets/jawaban/sccuess-ping-r-dc.png)
 
-BARAT
+### Surabaya Barat
 
-kurang lebih juga sama:
+Konfigurasi router dan switch:
 
 ![image](./assets/jawaban/config/R-BARAT-config-lanjutan.png)
 
@@ -186,13 +186,13 @@ kurang lebih juga sama:
 
 ![image](./assets/jawaban/config/SW-BARAT-config.png)
 
-TIMUR
+### Surabaya Timur
 
 ![image](./assets/jawaban/config/R-TIMUR-lanjutan.png)
 
 ![image](./assets/jawaban/config/SW-TIMUR.png)
 
-kurang spasi di Fa0/3nya. Jadinya cara benerinnya:
+Fa0/3 sempat salah dikonfigurasi. Perbaikannya:
 
 ```
 configure terminal
@@ -206,22 +206,22 @@ end
 write memory
 ```
 
-SELATAN
+### Surabaya Selatan
 
 ![image](./assets/jawaban/config/R-SELATAN-config-lanjutan.png)
 
-salah ping harusnya `10.65.208.9` bukan `10.65.208.13`
+Alamat uji yang benar adalah `10.65.208.9`, bukan `10.65.208.13`.
 
 ![image](./assets/jawaban/config/SW-SELATAN-config.png)
 
-UTARA
+### Surabaya Utara
 
 ![image](./assets/jawaban/config/R-UTARA-config-lanjutan.png)
 
 ![image](./assets/jawaban/config/sw-utara-config-1.png)
 ![image](./assets/jawaban/config/sw-utara-config-2.png)
 
-PELABUHAN
+### Pelabuhan
 
 ![image](./assets/jawaban/config/R-PELABUHAN-config-lanjutan.png)
 
@@ -229,7 +229,7 @@ PELABUHAN
 
 ![image](./assets/jawaban/config/sw-pelabuhan-config.png)
 
-sisanya:
+Hasil pemeriksaan trunk dan VLAN:
 
 ```
 SW-PELABUHAN#show interface trunk
@@ -265,7 +265,7 @@ VLAN Name                             Status    Ports
 1005 trnet-default                    active  
 ```
 
-Lalu perbaikan topologinya:
+Tampilan topologi setelah perbaikan awal:
 
 ![image](./assets/jawaban/perbaikan-topologi.png)
 
@@ -839,10 +839,69 @@ Layanan ditempatkan pada dua server sesuai perannya. Pengujian di bawah ini dija
 
 ### 8.3 Hasil uji CIDR dan OSPF
 
-Pengujian layanan lengkap dijalankan pada `K08_CIDR.pkt`. DNS dan web dengan
-domain baru juga diterapkan pada `K08_CIDR_OSPF.pkt`. Bukti tambahan untuk
-DHCP, konektivitas, routing OSPF, dan akses internet tersedia di
-`assets/bukti/CIDR`, `assets/bukti/OSPF`, dan `assets/bukti/Keisya`.
+Gambar di bawah ini adalah hasil uji langsung dari Packet Tracer. Bukti lama
+yang masih memakai `k8.local` atau `k8.com` tidak dipakai sebagai bukti
+konfigurasi akhir.
+
+#### Pengujian pada K08_CIDR.pkt
+
+**DHCP PC Balai Kota**
+
+![DHCP PC Balai Kota](./assets/bukti/CIDR/02-dhcp-pc-balai-ipconfig.png)
+
+**Ping antarwilayah ke PJU Selatan**
+
+![Ping antarwilayah CIDR](./assets/bukti/CIDR/04-ping-antarkota-pju-selatan.png)
+
+**Pool DHCP PJU menggunakan mask /25**
+
+![Pool DHCP PJU /25](./assets/bukti/CIDR/08-pool-pju-mask-25.png)
+
+**Lease DHCP PJU menggunakan mask /25**
+
+![Lease DHCP PJU /25](./assets/bukti/CIDR/09-dhcp-pju-mask-25.png)
+
+**Ping PJU Timur tanpa packet loss**
+
+![Ping PJU Timur](./assets/bukti/CIDR/10-ping-pju-timur-zero-loss.png)
+
+#### Pengujian pada K08_CIDR_OSPF.pkt
+
+**DHCP PJU pada file OSPF**
+
+![DHCP PJU OSPF](./assets/bukti/OSPF/01-dhcp-pju-25.png)
+
+**Ping ke server DNS dan Storage DC**
+
+![Ping DNS dan Storage DC](./assets/bukti/OSPF/06-ping-dns-storage.png)
+
+**Ping antarwilayah**
+
+![Ping antarwilayah OSPF](./assets/bukti/OSPF/07-ping-antarkota.png)
+
+**Neighbor OSPF berstatus FULL**
+
+![Neighbor OSPF FULL](./assets/bukti/OSPF/09-ospf-neighbors-full.png)
+
+**Rute hasil OSPF**
+
+![Rute OSPF](./assets/bukti/OSPF/10-ospf-routes.png)
+
+**Default route OSPF**
+
+![Default route OSPF](./assets/bukti/OSPF/11-default-route.png)
+
+**R-ISP tanpa rute privat internal**
+
+![Tabel rute R-ISP](./assets/bukti/OSPF/12-isp-return-route.png)
+
+**Label WAN 203.0.113.32/30**
+
+![Label WAN](./assets/bukti/OSPF/13-wan-label.png)
+
+**Ping internet setelah perbaikan**
+
+![Ping internet setelah perbaikan](./assets/bukti/OSPF/14-ping-internet-setelah-fix.png)
 
 ## Checklist Akhir
 
