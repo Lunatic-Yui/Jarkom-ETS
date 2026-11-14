@@ -11,7 +11,7 @@
 | 2 | Tabel VLSM berisi subnet, network ID, prefix, host range, broadcast, dan gateway | Selesai | Sheet `Revisi VLSM` pada [Revisi Tabel Jarkom ETS.xlsx](./Revisi%20Tabel%20Jarkom%20ETS.xlsx) |
 | 2 | Tabel CIDR per router | Selesai | Sheet `Revisi CIDR` pada [Revisi Tabel Jarkom ETS.xlsx](./Revisi%20Tabel%20Jarkom%20ETS.xlsx) |
 | 2 | Jawaban UTS, perbaikan, dan alasan dicatat | Selesai | [Revisi Tabel Jarkom ETS.xlsx](./Revisi%20Tabel%20Jarkom%20ETS.xlsx) |
-| 2 | Mask `/25`, `/27`, dan `/30` sudah benar | Selesai | [Tabel subnetting](./README.md#2-tabel-vlsm-cidr-dan-revisi) |
+| 2 | Mask `/25`, `/27`, dan `/30` sudah benar | Selesai | [Tabel subnetting](./README.md#soal-2-tabel-vlsm-cidr-dan-revisi) |
 | 3 | Default route cabang ke pusat dan pusat ke ISP | Selesai | [Aturan static routing](./README.md#31-aturan-static-routing) |
 | 3 | Static route downstream pada R-PUSAT dan R-UTARA | Selesai | [Tabel static route](./README.md#32-tabel-konfigurasi-static-route) dan [bukti R-PUSAT](./assets/bukti/Keisya/03-static-route-r-pusat.png) |
 | 3 | Koneksi antar-LAN | Selesai | [Uji koneksi](./README.md#33-uji-konektivitas-antar-lan) dan [ping CIDR](./assets/bukti/CIDR/04-ping-antarkota-pju-selatan.png) |

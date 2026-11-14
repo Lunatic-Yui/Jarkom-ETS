@@ -1,6 +1,6 @@
 # JARKOM-ETS
 
-## Member
+## Anggota Kelompok
 
 | Nama | NRP | Peran & Pembagian Kerja |
 |---|---|---|
@@ -12,7 +12,11 @@ README, laporan, bukti, dan persiapan video dikerjakan bersama. Tiap anggota men
 
 ## Daftar Isi
 
-- [1. Topologi](#1-topologi)
+- [Anggota Kelompok](#anggota-kelompok)
+- [Soal 1: Topologi](#soal-1-topologi)
+  - [Pertanyaan](#pertanyaan-soal-1)
+  - [Jawaban](#jawaban-soal-1)
+  - [Langkah](#langkah-soal-1)
   - [Topologi akhir](#topologi-akhir)
   - [R-ISP](#r-isp)
   - [R-PUSAT](#r-pusat)
@@ -26,33 +30,51 @@ README, laporan, bukti, dan persiapan video dikerjakan bersama. Tiap anggota men
   - [Alasan pemilihan perangkat dan media](#alasan-pemilihan-perangkat-dan-media)
   - [Penambahan port pada R-PUSAT](#penambahan-port-pada-r-pusat)
   - [Pemetaan port](#pemetaan-port)
-- [2. Tabel VLSM, CIDR, dan Revisi](#2-tabel-vlsm-cidr-dan-revisi)
-- [3. Static Routing](#3-static-routing)
+- [Soal 2: Tabel VLSM, CIDR, dan Revisi](#soal-2-tabel-vlsm-cidr-dan-revisi)
+  - [Pertanyaan](#pertanyaan-soal-2)
+  - [Jawaban](#jawaban-soal-2)
+  - [Langkah](#langkah-soal-2)
+- [Soal 3: Static Routing](#soal-3-static-routing)
+  - [Pertanyaan](#pertanyaan-soal-3)
+  - [Jawaban](#jawaban-soal-3)
+  - [Langkah](#langkah-soal-3)
   - [3.1 Aturan static routing](#31-aturan-static-routing)
   - [3.2 Tabel konfigurasi static route](#32-tabel-konfigurasi-static-route)
   - [3.3 Uji konektivitas antar-LAN](#33-uji-konektivitas-antar-lan)
-- [4. IP dan DHCP](#4-ip-dan-dhcp)
+- [Soal 4: IP dan DHCP](#soal-4-ip-dan-dhcp)
+  - [Pertanyaan](#pertanyaan-soal-4)
+  - [Jawaban](#jawaban-soal-4)
+  - [Langkah](#langkah-soal-4)
   - [4.1 IP statis](#41-ip-statis)
     - [Alamat interface router](#alamat-interface-router)
     - [Alamat server](#alamat-server)
     - [Cek koneksi](#cek-koneksi)
   - [4.2 DHCP LAN](#42-dhcp-lan)
   - [4.3 Cek DHCP](#43-cek-dhcp)
-- [5. Network Address Translation (NAT)](#5-network-address-translation-nat)
+- [Soal 5: Network Address Translation (NAT)](#soal-5-network-address-translation-nat)
+  - [Pertanyaan](#pertanyaan-soal-5)
+  - [Jawaban](#jawaban-soal-5)
+  - [Langkah](#langkah-soal-5)
   - [5.1 Aturan NAT Overload (PAT)](#51-aturan-nat-overload-pat)
   - [5.2 Konfigurasi NAT pada R-PUSAT](#52-konfigurasi-nat-pada-r-pusat)
   - [5.3 Hasil pengujian](#53-hasil-pengujian)
     - [Tabel rute Router-ISP](#1-tabel-rute-router-isp-bebas-dari-rute-privat)
     - [Uji ping ke Server 8.8.8.8](#2-uji-ping-dari-seluruh-subnet-ke-server-publik-8888)
     - [Tabel translasi NAT](#3-bukti-translasi-alamat-nat-table-translation)
-- [6. Tunnel GRE](#6-tunnel-gre)
+- [Soal 6: Tunnel GRE](#soal-6-tunnel-gre)
+  - [Pertanyaan](#pertanyaan-soal-6)
+  - [Jawaban](#jawaban-soal-6)
+  - [Langkah](#langkah-soal-6)
   - [6.1 Alamat Tunnel0](#61-alamat-tunnel0)
   - [6.2 Konfigurasi Tunnel GRE](#62-konfigurasi-tunnel-gre)
     - [R-PUSAT](#1-konfigurasi-pada-r-pusat)
     - [R-PELABUHAN](#2-konfigurasi-pada-r-pelabuhan)
   - [6.3 Uji traceroute](#63-uji-traceroute)
   - [6.4 Catatan GRE](#64-catatan-gre)
-- [7. OSPF dan Failover](#7-ospf-dan-failover)
+- [Soal 7: OSPF dan Failover](#soal-7-ospf-dan-failover)
+  - [Pertanyaan](#pertanyaan-soal-7)
+  - [Jawaban](#jawaban-soal-7)
+  - [Langkah](#langkah-soal-7)
   - [7.1 Berkas OSPF](#71-berkas-ospf)
   - [7.2 Link cadangan L7](#72-link-cadangan-l7-r-dc-ke-r-utara)
   - [7.3 OSPF Area 0](#73-ospf-area-0)
@@ -67,7 +89,10 @@ README, laporan, bukti, dan persiapan video dikerjakan bersama. Tiap anggota men
     - [L1 dimatikan](#2-l1-dimatikan)
     - [Hasil saat L1 mati](#3-hasil-saat-l1-mati)
     - [L1 diaktifkan lagi](#4-l1-diaktifkan-lagi)
-- [8. Layanan Server](#8-layanan-server)
+- [Soal 8: Layanan Server](#soal-8-layanan-server)
+  - [Pertanyaan](#pertanyaan-soal-8)
+  - [Jawaban](#jawaban-soal-8)
+  - [Langkah](#langkah-soal-8)
   - [8.1 DNS dan HTTP](#81-srv-balaikota---dns-dan-http)
   - [8.2 DHCP CCTV, FTP, dan Email](#82-srv-storage-dc---dhcp-cctv-ftp-dan-email)
   - [8.3 Hasil uji CIDR dan OSPF](#83-hasil-uji-cidr-dan-ospf)
@@ -75,14 +100,36 @@ README, laporan, bukti, dan persiapan video dikerjakan bersama. Tiap anggota men
     - [K08_CIDR_OSPF.pkt](#pengujian-pada-k08_cidr_ospfpkt)
 - [Checklist akhir](#checklist-akhir)
 
-## 1. Topologi
+## Soal 1: Topologi
+
+### Pertanyaan Soal 1
 
 ![image](./assets/soal/soal-1.png)
+
+- Buat topologi Packet Tracer dengan skema VLSM atau CIDR.
+- Hubungan backbone L1-L6, R-ISP, dan Server 8.8.8.8 harus mengikuti gambar soal.
+- Desain perangkat, switch, media, dan penambahan port tiap lokasi dijelaskan di dokumentasi.
+- Gunakan satu perangkat wakil per LAN, ganti nama bawaan perangkat, dan beri label subnet pada setiap LAN.
+- Perhitungan subnet tetap memakai jumlah host penuh.
 
 Topologi acuan dari soal:
 
 ![image](./assets/jawaban/topologi-soal-1-1.png)
 ![image](./assets/jawaban/topologi-soal-1-2.png)
+
+### Jawaban Soal 1
+
+Topologi dibuat dengan CIDR sebagai rancangan utama. Setiap lokasi memakai satu router, satu switch, dua VLAN, dan satu perangkat wakil pada tiap LAN. R-PUSAT menjadi penghubung utama ke cabang dan R-ISP.
+
+### Langkah Soal 1
+
+1. Pasang R-ISP, R-PUSAT, enam router lokasi, switch, server, dan perangkat wakil.
+2. Hubungkan L1-L6 serta Server 8.8.8.8 sesuai gambar soal.
+3. Ganti nama perangkat berdasarkan lokasi dan fungsinya.
+4. Buat VLAN 10 dan VLAN 20, lalu pasang trunk dari switch ke router.
+5. Tambahkan modul pada R-PUSAT untuk mencukupi semua link backbone.
+6. Beri label nama LAN, network ID/prefix, dan jumlah host.
+7. Atur IP setiap interface, lalu cek koneksi langsung antar-router.
 
 ### Topologi akhir
 
@@ -374,16 +421,53 @@ Nomor port tidak seragam di semua lokasi, jadi dicatat di sini sesuai kabel yang
 | R-BARAT | Gi0/1 ke R-PUSAT (L5) | Gi0/0 ke SW-BARAT |
  
 Port uplink (trunk) ke router tiap switch: SW-BALAIKOTA `Fa0/3`, SW-DC `Fa0/3`, dan SW-UTARA, SW-PELABUHAN, SW-SELATAN, SW-TIMUR, SW-BARAT di `Fa0/1`. Port lain adalah access port ke VLAN 10 dan VLAN 20.
- 
-## 2. Tabel VLSM, CIDR, dan Revisi
+
+---
+
+## Soal 2: Tabel VLSM, CIDR, dan Revisi
+
+### Pertanyaan Soal 2
 
 ![image](./assets/soal/soal-2.png)
+
+Buat tabel VLSM dan CIDR yang memuat nama subnet, network ID, prefix, rentang host, broadcast, dan gateway. Kesalahan pada jawaban UTS boleh diperbaiki, tetapi jawaban lama, hasil perbaikan, dan alasannya harus dicatat.
+
+### Jawaban Soal 2
 
 Tabel lengkap ada di spreadsheet berikut. Kolom alasan revisi menjelaskan perbedaan dengan jawaban UTS.
 
 [Revisi Tabel Jarkom ETS.xlsx](./Revisi%20Tabel%20Jarkom%20ETS.xlsx)
 
-## 3. Static Routing
+### Langkah Soal 2
+
+1. Catat kebutuhan host semua LAN dan link L1-L6 dari jawaban UTS.
+2. Tentukan prefix, network ID, rentang host, broadcast, dan gateway tiap subnet.
+3. Susun alokasi VLSM dari kebutuhan host terbesar ke terkecil.
+4. Buat ringkasan CIDR berdasarkan blok jaringan tiap router.
+5. Catat nilai yang diperbaiki beserta alasannya pada tabel revisi.
+
+---
+
+## Soal 3: Static Routing
+
+### Pertanyaan Soal 3
+
+- Semua LAN harus dapat saling terhubung hanya dengan static route dan default route.
+- Default route hanya boleh menuju router di atasnya atau ke arah luar.
+- R-PUSAT harus memiliki route ke semua LAN cabang.
+- R-UTARA harus memiliki route ke semua LAN R-PELABUHAN.
+
+### Jawaban Soal 3
+
+Router cabang memakai default route ke router di atasnya. R-PUSAT menyimpan route ke jaringan cabang, sedangkan R-UTARA menyimpan route khusus menuju dua LAN Pelabuhan.
+
+### Langkah Soal 3
+
+1. Pastikan semua link antar-router sudah aktif dan bisa saling ping.
+2. Pasang default route pada router cabang menuju R-PUSAT atau R-UTARA.
+3. Pasang route downstream pada R-PUSAT dan R-UTARA.
+4. Arahkan route Balai Kota-Pelabuhan melalui Tunnel0 setelah GRE dibuat.
+5. Uji ping antar-LAN dari beberapa lokasi.
 
 ### 3.1 Aturan static routing
 Aturan static routing yang dipakai:
@@ -434,9 +518,28 @@ Aturan static routing yang dipakai:
 
 ---
 
-## 4. IP dan DHCP
+## Soal 4: IP dan DHCP
+
+### Pertanyaan Soal 4
 
 ![image](./assets/soal/soal-4.png)
+
+- Interface router dan semua server menggunakan IP statis.
+- Perangkat pengguna mendapat IP, gateway, dan DNS secara otomatis tanpa bentrok dengan IP statis.
+- CCTV Kota harus mendapat alamat dari DHCP di LAN Server dan Storage DC, bukan dari router.
+
+### Jawaban Soal 4
+
+Router dan server memakai IP statis. DHCP LAN pengguna dijalankan pada router masing-masing, sedangkan CCTV Kota dilayani SRV-STORAGE-DC melalui DHCP relay di R-DC.
+
+### Langkah Soal 4
+
+1. Isi IP statis pada semua interface router dan server.
+2. Keluarkan alamat gateway `.1` dan server `.2` dari pool DHCP.
+3. Buat pool DHCP pada router untuk setiap LAN pengguna.
+4. Buat pool CCTV di SRV-STORAGE-DC.
+5. Tambahkan `ip helper-address 10.64.160.2` pada sub-interface CCTV R-DC.
+6. Ubah perangkat pengguna ke DHCP, lalu cek IP, mask, gateway, dan DNS.
 
 ### 4.1 IP statis
  
@@ -520,7 +623,24 @@ Khusus **CCTV Kota**, DHCP dipusatkan pada `SRV-STORAGE-DC` (`10.64.160.2`) deng
 
 ---
 
-## 5. Network Address Translation (NAT)
+## Soal 5: Network Address Translation (NAT)
+
+### Pertanyaan Soal 5
+
+Semua host internal harus dapat mengakses Server `8.8.8.8` memakai satu IP publik R-PUSAT. R-ISP tidak boleh memiliki route menuju jaringan privat internal.
+
+### Jawaban Soal 5
+
+R-PUSAT memakai NAT Overload atau PAT pada `203.0.113.33`. R-ISP hanya mengenal jaringan publik `203.0.113.32/30` dan `8.8.8.0/24`.
+
+### Langkah Soal 5
+
+1. Buat ACL untuk blok privat Kelompok 8, yaitu `10.64.0.0/15`.
+2. Tandai interface ke R-ISP sebagai `ip nat outside`.
+3. Tandai interface ke jaringan internal sebagai `ip nat inside`.
+4. Aktifkan PAT melalui IP interface publik R-PUSAT.
+5. Pastikan R-ISP tidak memiliki route privat.
+6. Jalankan ping ke `8.8.8.8`, lalu cek tabel translasi NAT.
 
 ### 5.1 Aturan NAT Overload (PAT)
 Aturannya:
@@ -609,7 +729,27 @@ Konfigurasi NAT outside, NAT inside, dan perintah overload pada R-PUSAT:
 
 ---
 
-## 6. Tunnel GRE
+## Soal 6: Tunnel GRE
+
+### Pertanyaan Soal 6
+
+- Buat tunnel GRE antara R-PUSAT dan R-PELABUHAN.
+- Trafik antara subnet Balai Kota dan Pelabuhan harus melewati tunnel.
+- Jelaskan alasan router memilih Tunnel0 dan mengapa GRE tidak mengenkripsi data.
+- Bonus: enkripsi trafik GRE dengan IPsec.
+
+### Jawaban Soal 6
+
+Tunnel0 memakai jaringan `192.168.8.0/30`. Route khusus menuju LAN Balai Kota dan Pelabuhan diarahkan ke alamat tunnel sehingga trafik kedua lokasi masuk ke GRE. Bonus IPsec tidak digunakan.
+
+### Langkah Soal 6
+
+1. Pastikan endpoint fisik R-PUSAT dan R-PELABUHAN saling terjangkau.
+2. Buat Tunnel0 pada kedua router.
+3. Isi alamat `192.168.8.1/30` dan `192.168.8.2/30`.
+4. Tentukan tunnel source dan tunnel destination.
+5. Tambahkan static route LAN Balai Kota dan Pelabuhan melalui Tunnel0.
+6. Cek status `up/up`, ping alamat tunnel, lalu jalankan `tracert`.
 
 ### 6.1 Alamat Tunnel0
 Ketentuan Soal 6 mengharuskan:
@@ -674,7 +814,30 @@ dengan IPsec.
 
 ---
 
-## 7. OSPF dan Failover
+## Soal 7: OSPF dan Failover
+
+### Pertanyaan Soal 7
+
+- Kerjakan OSPF pada salinan file utama.
+- Tambahkan link cadangan L7 antara R-DC dan R-UTARA dengan alamat yang belum dipakai.
+- Ganti static route antar-router dengan OSPF satu area.
+- Jangan kirim pesan OSPF ke LAN pengguna.
+- Default route hanya dibuat di R-PUSAT dan dibagikan melalui OSPF.
+- Saat satu link backbone putus, koneksi harus berpindah ke jalur lain.
+
+### Jawaban Soal 7
+
+OSPFv2 area 0 dikonfigurasi pada tujuh router di file terpisah. L7 memakai jaringan `10.65.208.24/30` dan menjadi jalur cadangan ketika L1 antara R-DC dan R-PUSAT dimatikan.
+
+### Langkah Soal 7
+
+1. Salin file utama menjadi `K08_CIDR_OSPF.pkt`.
+2. Pasang modul serial dan hubungkan R-DC dengan R-UTARA sebagai L7.
+3. Beri alamat `10.65.208.25/30` dan `10.65.208.26/30` pada L7.
+4. Hapus static route antar-router, tetapi pertahankan default route R-PUSAT ke R-ISP.
+5. Aktifkan OSPF process 1 area 0 dan buat interface LAN menjadi passive.
+6. Sebarkan default route dengan `default-information originate`.
+7. Cek neighbor dan route OSPF, lalu matikan L1 untuk menguji failover.
 
 ### 7.1 Berkas OSPF
 
@@ -800,7 +963,29 @@ kembali memakai link utama.
 
 ---
 
-## 8. Layanan Server
+## Soal 8: Layanan Server
+
+### Pertanyaan Soal 8
+
+Gunakan domain internal `k8.smartcity.lab` untuk layanan berikut:
+
+- DNS di LAN Server dan Storage DC agar nama `www`, `ftp`, dan `mail` dapat diakses dari semua wilayah.
+- Web "Portal Smart City Surabaya" yang mencantumkan nomor kelompok.
+- FTP di LAN Server dan Storage DC dengan akun login untuk penyimpanan rekaman CCTV.
+- Email agar pengguna Balai Kota dan Pelabuhan dapat saling mengirim dan menerima pesan.
+
+### Jawaban Soal 8
+
+DNS dan web dijalankan di SRV-BALAIKOTA. DHCP CCTV, FTP, dan email dijalankan di SRV-STORAGE-DC. Semua layanan memakai domain `k8.smartcity.lab`.
+
+### Langkah Soal 8
+
+1. Isi IP statis, gateway, dan DNS pada kedua server.
+2. Tambahkan record `www`, `ftp`, `mail`, `srv-balaikota`, dan `srv-storage` pada DNS.
+3. Aktifkan HTTP dan ubah halaman utama menjadi Portal Smart City Surabaya.
+4. Aktifkan FTP, buat akun `admin-k8`, dan nyalakan semua permission.
+5. Aktifkan SMTP/POP3 dengan domain `k8.smartcity.lab`, lalu buat akun email.
+6. Uji DNS, web, FTP, serta kirim dan terima email dari PC klien.
 
 ### 8.1 SRV-BALAIKOTA - DNS dan HTTP
 
