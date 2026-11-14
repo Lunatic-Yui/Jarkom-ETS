@@ -8,6 +8,71 @@
 | Askhabul                      | 5027251049 | **B - Routing dan keamanan**: static routing, NAT, GRE, OSPF, dan link L7              |
 | Keisya                        | 5027251068 | **C - Layanan dan dokumentasi**: DHCP, server, README, bukti, dan laporan             |
 
+## Daftar Isi
+
+- [1. Topologi](#1-topologi)
+  - [Topologi akhir](#topologi-akhir)
+  - [R-ISP](#r-isp)
+  - [R-PUSAT](#r-pusat)
+  - [Command Center / DC](#command-center--dc)
+  - [Barat](#barat)
+  - [Timur](#timur)
+  - [Selatan](#selatan)
+  - [Utara](#utara)
+  - [Pelabuhan](#pelabuhan)
+  - [Desain tiap lokasi](#desain-tiap-lokasi)
+  - [Alasan pemilihan perangkat dan media](#alasan-pemilihan-perangkat-dan-media)
+  - [Penambahan port pada R-PUSAT](#penambahan-port-pada-r-pusat)
+  - [Pemetaan port](#pemetaan-port)
+- [2. Tabel VLSM, CIDR, dan Revisi](#2-tabel-vlsm-cidr-dan-revisi)
+- [3. Static Routing](#3-static-routing)
+  - [3.1 Aturan static routing](#31-aturan-static-routing)
+  - [3.2 Tabel konfigurasi static route](#32-tabel-konfigurasi-static-route)
+  - [3.3 Uji konektivitas antar-LAN](#33-uji-konektivitas-antar-lan)
+- [4. IP dan DHCP](#4-ip-dan-dhcp)
+  - [4.1 IP statis](#41-ip-statis)
+    - [Alamat interface router](#alamat-interface-router)
+    - [Alamat server](#alamat-server)
+    - [Cek koneksi](#cek-koneksi)
+  - [4.2 DHCP LAN](#42-dhcp-lan)
+  - [4.3 Cek DHCP](#43-cek-dhcp)
+- [5. Network Address Translation (NAT)](#5-network-address-translation-nat)
+  - [5.1 Aturan NAT Overload (PAT)](#51-aturan-nat-overload-pat)
+  - [5.2 Konfigurasi NAT pada R-PUSAT](#52-konfigurasi-nat-pada-r-pusat)
+  - [5.3 Hasil pengujian](#53-hasil-pengujian)
+    - [Tabel rute Router-ISP](#1-tabel-rute-router-isp-bebas-dari-rute-privat)
+    - [Uji ping ke Server 8.8.8.8](#2-uji-ping-dari-seluruh-subnet-ke-server-publik-8888)
+    - [Tabel translasi NAT](#3-bukti-translasi-alamat-nat-table-translation)
+- [6. Tunnel GRE](#6-tunnel-gre)
+  - [6.1 Alamat Tunnel0](#61-alamat-tunnel0)
+  - [6.2 Konfigurasi Tunnel GRE](#62-konfigurasi-tunnel-gre)
+    - [R-PUSAT](#1-konfigurasi-pada-r-pusat)
+    - [R-PELABUHAN](#2-konfigurasi-pada-r-pelabuhan)
+  - [6.3 Uji traceroute](#63-uji-traceroute)
+  - [6.4 Catatan GRE](#64-catatan-gre)
+- [7. OSPF dan Failover](#7-ospf-dan-failover)
+  - [7.1 Berkas OSPF](#71-berkas-ospf)
+  - [7.2 Link cadangan L7](#72-link-cadangan-l7-r-dc-ke-r-utara)
+  - [7.3 OSPF Area 0](#73-ospf-area-0)
+    - [Passive interface](#1-passive-interface)
+    - [Default route OSPF](#2-default-route-ospf)
+    - [Konfigurasi tiap router](#3-konfigurasi-tiap-router)
+  - [7.4 Hasil OSPF](#74-hasil-ospf)
+    - [Neighbor R-DC](#1-neighbor-r-dc)
+    - [Default route di router cabang](#2-default-route-di-router-cabang)
+  - [7.5 Uji failover](#75-uji-failover)
+    - [L1 aktif](#1-l1-aktif)
+    - [L1 dimatikan](#2-l1-dimatikan)
+    - [Hasil saat L1 mati](#3-hasil-saat-l1-mati)
+    - [L1 diaktifkan lagi](#4-l1-diaktifkan-lagi)
+- [8. Layanan Server](#8-layanan-server)
+  - [8.1 DNS dan HTTP](#81-srv-balaikota---dns-dan-http)
+  - [8.2 DHCP CCTV, FTP, dan Email](#82-srv-storage-dc---dhcp-cctv-ftp-dan-email)
+  - [8.3 Hasil uji CIDR dan OSPF](#83-hasil-uji-cidr-dan-ospf)
+    - [K08_CIDR.pkt](#pengujian-pada-k08_cidrpkt)
+    - [K08_CIDR_OSPF.pkt](#pengujian-pada-k08_cidr_ospfpkt)
+- [Checklist akhir](#checklist-akhir)
+
 ## 1. Topologi
 
 ![image](./assets/soal/soal-1.png)
@@ -156,7 +221,7 @@ IP address, subnet mask, dan gateway SRV-STORAGE-DC:
 
 ![image](./assets/jawaban/sccuess-ping-r-dc.png)
 
-### Surabaya Barat
+### Barat
 
 Konfigurasi router dan switch:
 
@@ -166,7 +231,7 @@ Konfigurasi router dan switch:
 
 ![image](./assets/jawaban/config/SW-BARAT-config.png)
 
-### Surabaya Timur
+### Timur
 
 ![image](./assets/jawaban/config/R-TIMUR-lanjutan.png)
 
@@ -186,7 +251,7 @@ end
 write memory
 ```
 
-### Surabaya Selatan
+### Selatan
 
 ![image](./assets/jawaban/config/R-SELATAN-config-lanjutan.png)
 
@@ -194,7 +259,7 @@ Alamat uji yang benar adalah `10.65.208.9`, bukan `10.65.208.13`.
 
 ![image](./assets/jawaban/config/SW-SELATAN-config.png)
 
-### Surabaya Utara
+### Utara
 
 ![image](./assets/jawaban/config/R-UTARA-config-lanjutan.png)
 
@@ -263,11 +328,11 @@ Setiap lokasi punya dua LAN, sedangkan router 2911 hanya punya tiga port Gigabit
 |---|---|---|---|---|
 | Balai Kota | R-PUSAT | SW-BALAIKOTA | PC-PEGAWAI-BALAIKOTA (PC) | SRV-BALAIKOTA (server) |
 | Command Center | R-DC | SW-DC | PC-CCTV-KOTA (webcam) | SRV-STORAGE-DC (server) |
-| Surabaya Utara | R-UTARA | SW-UTARA | AP-WIFI-UTARA (access point) | PC-SENSOR-LALINTAS-UTARA (PC) |
+| Utara | R-UTARA | SW-UTARA | AP-WIFI-UTARA (access point) | PC-SENSOR-LALINTAS-UTARA (PC) |
 | Pelabuhan | R-PELABUHAN | SW-PELABUHAN | PC-SCADA-PELABUHAN (PC) | PC-KANTOR-PELABUHAN (PC) |
-| Surabaya Selatan | R-SELATAN | SW-SELATAN | AP-WIFI-SELATAN (access point) | PC-PJU-SELATAN (PC) |
-| Surabaya Timur | R-TIMUR | SW-TIMUR | AP-WIFI-TIMUR (access point) | PC-SENSOR-BANJIR-TIMUR (PC) |
-| Surabaya Barat | R-BARAT | SW-BARAT | AP-WIFI-BARAT (access point) | PC-PUSKESMAS-SEKOLAH-BARAT (PC) |
+| Selatan | R-SELATAN | SW-SELATAN | AP-WIFI-SELATAN (access point) | PC-PJU-SELATAN (PC) |
+| Timur | R-TIMUR | SW-TIMUR | AP-WIFI-TIMUR (access point) | PC-SENSOR-BANJIR-TIMUR (PC) |
+| Barat | R-BARAT | SW-BARAT | AP-WIFI-BARAT (access point) | PC-PUSKESMAS-SEKOLAH-BARAT (PC) |
  
 ### Alasan pemilihan perangkat dan media
  
@@ -375,7 +440,7 @@ Aturan static routing yang dipakai:
  
 Semua interface router pakai IP statis via CLI. Server diset dari **Desktop, IP Configuration**. PC dan webcam dapat IP dari DHCP. AP-PT hanya menjadi bridge Layer 2.
  
-### Alamat interface router
+#### Alamat interface router
  
 | Router | Interface | Alamat | Tujuan |
 |---|---|---|---|
@@ -409,7 +474,7 @@ Semua interface router pakai IP statis via CLI. Server diset dari **Desktop, IP 
 | | Gi0/0.10 | 10.65.128.1/19 | WiFi Publik Barat |
 | | Gi0/0.20 | 10.65.160.1/24 | Puskesmas dan Sekolah Barat |
  
-### Alamat server
+#### Alamat server
  
 | Server | Alamat | Mask | Gateway |
 |---|---|---|---|
@@ -419,7 +484,7 @@ Semua interface router pakai IP statis via CLI. Server diset dari **Desktop, IP 
  
 Alamat `.2` dipakai untuk server, tepat setelah gateway `.1`. Jadi rentang DHCP pengguna di subnet yang sama harus dimulai setelah alamat tersebut supaya tidak bentrok.
  
-### Cek koneksi
+#### Cek koneksi
  
 - R-UTARA dan R-PUSAT saling ping berhasil (5/5), jadi L2 aktif.
 - R-PELABUHAN ke R-UTARA berhasil (5/5), jadi L6 aktif.
@@ -611,10 +676,10 @@ dengan IPsec.
 
 ### 7.1 Berkas OSPF
 
-Pengujian OSPF memakai file `K08_CIDR_OSPF.pkt`. Static route antar-router
+Pengujian OSPF memakai file [`K08_CIDR_OSPF.pkt`](./project/K08_CIDR_OSPF.pkt). Static route antar-router
 diganti dengan OSPFv2 area 0.
 
-### 7.2 Link cadangan L7 (R-DC <-> R-UTARA)
+### 7.2 Link cadangan L7 R-DC ke R-UTARA
 L7 ditambahkan sebagai jalur cadangan antara **R-DC** dan **R-UTARA**:
 1. **Pemasangan Modul Serial**: Modul `HWIC-2T` (2-port Serial WAN) dipasang pada slot HWIC `0/0` di R-DC dan R-UTARA.
 2. **Pengkabelan**: Menggunakan kabel Serial DCE/DTE antara `R-DC:Serial0/0/0` dan `R-UTARA:Serial0/0/0`.
