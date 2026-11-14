@@ -61,9 +61,11 @@ Soal tidak menulis "Surabaya Selatan". Diagram acuan memakai nama `R-SELATAN`, W
 
 | Anggota | Peran | Pekerjaan |
 |---|---|---|
-| Yovi (5027251107) | A - Topologi dan IP | Excel VLSM/CIDR, tabel revisi, topologi CPT, penamaan, label, dan IP dasar |
-| Askhabul (5027251049) | B - Routing dan keamanan | Static routing, NAT, GRE, OSPF, dan L7 |
-| Keisya (5027251068) | C - Layanan dan dokumentasi | DHCP, DNS, web, FTP, email, README, bukti, dan laporan |
+| Yovi (5027251107) | A - Topologi dan subnetting | Topologi CPT, VLSM/CIDR, tabel revisi, penamaan, label, IP dasar, serta video bagian 0-2 |
+| Askhabul (5027251049) | B - Routing dan keamanan | Static routing, NAT, GRE, OSPF, L7, failover, serta video bagian 3, 5, 6, dan 7 |
+| Keisya (5027251068) | C - DHCP dan layanan | DHCP PC/CCTV, DNS, web, FTP, email, serta video bagian 4, 8, dan 9 |
+
+README, laporan, bukti, dan persiapan video dikerjakan bersama. Tiap anggota menulis dan mengecek bagian yang menjadi tugasnya.
 
 ## Urutan video
 
@@ -81,6 +83,8 @@ Soal tidak menulis "Surabaya Selatan". Diagram acuan memakai nama `R-SELATAN`, W
 | 9 Penutup | 3 | C |
 
 Total 30 menit.
+
+Urutan pembicara mengikuti nomor bab, bukan blok per anggota. Karena itu setelah bagian 4 oleh C, bagian 5-7 kembali ke B, lalu bagian 8-9 dilanjutkan C.
 
 ## Catatan DNS
 
