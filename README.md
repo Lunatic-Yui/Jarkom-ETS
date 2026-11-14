@@ -94,8 +94,7 @@ Topologi acuan dari soal:
 
 ![Topologi OSPF](./assets/jawaban/topologi-ospf-full.png)
 
-CIDR dipakai sebagai desain utama. Pembagian bloknya ada di sheet `Revisi CIDR`,
-sedangkan tabel VLSM dipakai sebagai pembanding jawaban UTS.
+Topologi utama memakai CIDR. Perhitungan VLSM, CIDR, dan revisi jawaban UTS ada di [Revisi Tabel Jarkom ETS.xlsx](./Revisi%20Tabel%20Jarkom%20ETS.xlsx).
 
 ### R-ISP
 ![image](./assets/jawaban/config/R-ISP-config.png)
