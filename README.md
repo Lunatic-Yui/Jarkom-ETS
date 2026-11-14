@@ -1,4 +1,4 @@
-﻿# JARKOM-ETS
+# JARKOM-ETS
 
 ## Member
 
@@ -8,17 +8,16 @@
 | Askhabul                      | 5027251049 | **B - Spesialis Rute & Keamanan**: static routing, NAT, GRE, OSPF + link cadangan L7     |
 | Keisya                        | 5027251068 | **C - SysAdmin & Dokumentasi**: DHCP (PC & CCTV), layanan aplikasi, README, bukti, laporan |
 
-## Laporan
+## 1. Topologi dan Pengalamatan
 
-1. ![image](./assets/soal/soal-1.png)
+![image](./assets/soal/soal-1.png)
 
 Kurang lebih topologinya seperti berikut:
 
 ![image](./assets/jawaban/topologi-soal-1-1.png)
 ![image](./assets/jawaban/topologi-soal-1-2.png)
 
-Nah disini kelompok kami menggunakan rancangan topologi skema CIDR agar bisa memetakan antar router dengan mudah
-dan juga dari CIDR sendiri memiliki fleksibilitas untuk jaringannya. Konfigurasi beberapa (source: https://cidrcalculator.org/id/ entar ku sederhanain lagi):
+Kelompok kami memilih skema CIDR karena tiga alasan. Pertama, setiap router mendapat satu blok besar (summary), jadi tabel rute di R-PUSAT cukup satu entri per router, bukan satu entri per LAN. Kedua, blok besar itu masih bisa dipecah menjadi subnet /30 untuk link antar-router, sehingga penambahan link seperti L7 pada soal 7 tidak perlu menggeser alamat LAN yang sudah dipakai. Ketiga, batas blok per router memudahkan pembagian kerja dan pengecekan siapa mengerjakan bagian mana. Rincian blok ada di sheet `Revisi CIDR`, sedangkan tabel VLSM dipakai sebagai pembanding jawaban UTS.
 
 R-ISP
 ![image](./assets/jawaban/config/R-ISP-config.png)
@@ -308,15 +307,77 @@ Nomor port tidak seragam di semua lokasi, jadi dicatat di sini sesuai kabel yang
  
 Port uplink (trunk) ke router tiap switch: SW-BALAIKOTA `Fa0/3`, SW-DC `Fa0/3`, dan SW-UTARA, SW-PELABUHAN, SW-SELATAN, SW-TIMUR, SW-BARAT di `Fa0/1`. Port lain adalah access port ke VLAN 10 dan VLAN 20.
  
-2. ![image](./assets/soal/soal-2.png)
+## 2. Tabel VLSM, CIDR, dan Revisi
 
-Untuk soal 2 berikut di CSVnya dengan alasan kesalahannya dibawah tabelnya
+![image](./assets/soal/soal-2.png)
+
+Tabel lengkap ada di spreadsheet berikut. Kolom alasan revisi menjelaskan perbedaan dengan jawaban UTS.
 
 [Revisi Tabel Jarkom ETS.xlsx](./Revisi%20Tabel%20Jarkom%20ETS.xlsx)
 
-4. ![image](./assets/soal/soal-4.png)
+## 3. Static Routing
 
-4.1 Interface router dan server memakai IP statis
+### 3.1 Ketentuan & Desain Perutean Hierarkis
+Pada perancangan static routing ini, seluruh LAN internal harus dapat saling berkomunikasi secara *end-to-end* dengan mematuhi ketentuan hierarki perutean:
+1. **Default Route Arah Keluar (Upstream)**:
+   - Default route (`0.0.0.0/0`) hanya diperbolehkan mengarah ke router di atasnya.
+   - Router cabang stub (R-DC, R-SELATAN, R-TIMUR, R-BARAT) hanya mengarahkan default route ke gateway R-PUSAT.
+   - R-PELABUHAN mengarahkan default route ke R-UTARA (`10.65.208.21`).
+   - R-UTARA mengarahkan default route ke R-PUSAT (`10.65.208.5`).
+   - R-PUSAT mengarahkan default route ke R-ISP (`203.0.113.34`).
+2. **Static Route Arah Dalam (Downstream)**:
+   - R-PUSAT wajib memiliki static route spesifik ke seluruh LAN milik router di bawahnya (R-DC, R-UTARA, R-PELABUHAN, R-SELATAN, R-TIMUR, dan R-BARAT).
+   - R-UTARA wajib memiliki static route spesifik ke seluruh LAN milik R-PELABUHAN (`10.64.192.0/19` dan `10.64.224.0/25`).
+
+### 3.2 Tabel Konfigurasi Static Route
+
+Berikut rincian tabel konfigurasi rute statis pada setiap router:
+
+| Router | Network Tujuan | Netmask | Next-Hop | Keterangan |
+|---|---|---|---|---|
+| **R-PUSAT** | `0.0.0.0` | `0.0.0.0` | `203.0.113.34` | Default route keluar ke R-ISP |
+| | `10.64.128.0` | `255.255.224.0` | `10.65.208.2` | CCTV Kota (R-DC) |
+| | `10.64.160.0` | `255.255.255.0` | `10.65.208.2` | Server & Storage DC (R-DC) |
+| | `10.64.0.0` | `255.255.192.0` | `10.65.208.6` | WiFi Publik Utara (R-UTARA) |
+| | `10.64.64.0` | `255.255.254.0` | `10.65.208.6` | Sensor Lalu Lintas (R-UTARA) |
+| | `10.65.208.20` | `255.255.255.252` | `10.65.208.6` | Interkoneksi L6 (R-UTARA <-> R-PELABUHAN) |
+| | `10.64.192.0` | `255.255.224.0` | `192.168.8.2` | SCADA Pelabuhan melalui Tunnel0 |
+| | `10.64.224.0` | `255.255.255.128` | `192.168.8.2` | Kantor Pelabuhan melalui Tunnel0 |
+| | `10.65.0.0` | `255.255.224.0` | `10.65.208.10` | WiFi Publik Selatan (R-SELATAN) |
+| | `10.65.32.0` | `255.255.255.128` | `10.65.208.10` | PJU Pintar Selatan (R-SELATAN) |
+| | `10.65.64.0` | `255.255.224.0` | `10.65.208.14` | WiFi Publik Timur (R-TIMUR) |
+| | `10.65.96.0` | `255.255.252.0` | `10.65.208.14` | Sensor Banjir Timur (R-TIMUR) |
+| | `10.65.128.0` | `255.255.224.0` | `10.65.208.18` | WiFi Publik Barat (R-BARAT) |
+| | `10.65.160.0` | `255.255.255.0` | `10.65.208.18` | Puskesmas & Sekolah (R-BARAT) |
+| **R-DC** | `0.0.0.0` | `0.0.0.0` | `10.65.208.1` | Default route upstream ke R-PUSAT |
+| **R-UTARA** | `0.0.0.0` | `0.0.0.0` | `10.65.208.5` | Default route upstream ke R-PUSAT |
+| | `10.64.192.0` | `255.255.224.0` | `10.65.208.22` | Sensor & SCADA (R-PELABUHAN) |
+| | `10.64.224.0` | `255.255.255.128` | `10.65.208.22` | Kantor Pelabuhan (R-PELABUHAN) |
+| **R-PELABUHAN** | `0.0.0.0` | `0.0.0.0` | `10.65.208.21` | Default route upstream ke R-UTARA |
+| **R-SELATAN** | `0.0.0.0` | `0.0.0.0` | `10.65.208.9` | Default route upstream ke R-PUSAT |
+| **R-TIMUR** | `0.0.0.0` | `0.0.0.0` | `10.65.208.13` | Default route upstream ke R-PUSAT |
+| **R-BARAT** | `0.0.0.0` | `0.0.0.0` | `10.65.208.17` | Default route upstream ke R-PUSAT |
+
+### 3.3 Verifikasi Konektivitas Antar-LAN
+Uji konektivitas dilakukan menggunakan pengujian `ping` antar-perangkat di berbagai LAN yang berbeda:
+- **PC-PEGAWAI-BALAIKOTA** (`10.65.192.3`) -> **SRV-STORAGE-DC** (`10.64.160.2`): Sukses (*Packet Loss 0%*).
+- **PC-PEGAWAI-BALAIKOTA** (`10.65.192.3`) -> **PC-KANTOR-PELABUHAN** (`10.64.224.3`): Sukses (*Packet Loss 0%*).
+- **SRV-STORAGE-DC** (`10.64.160.2`) -> **PC-PUSKESMAS-SEKOLAH-BARAT** (`10.65.160.3`): Sukses (*Packet Loss 0%*).
+- **PC-PJU-SELATAN** (`10.65.32.3`) -> **PC-SENSOR-BANJIR-TIMUR** (`10.65.96.3`): Sukses (*Packet Loss 0%*).
+
+Dengan konfigurasi ini, seluruh segmen jaringan privat kota terhubung penuh tanpa memerlukan dynamic routing protocol pada file utama ini.
+
+Bukti tabel static route pada R-PUSAT:
+
+![Static route R-PUSAT](./assets/bukti/Keisya/03-static-route-r-pusat.png)
+
+---
+
+## 4. Pengalamatan IP dan DHCP
+
+![image](./assets/soal/soal-4.png)
+
+### 4.1 Interface router dan server memakai IP statis
  
 Seluruh interface router dikonfigurasi dengan IP statis lewat CLI (`ip address` pada interface atau sub-interface). Seluruh server dikonfigurasi statis lewat tab **Desktop, IP Configuration**, dengan pilihan **Static**. Perangkat pengguna (PC dan webcam) mendapat IP dinamis dari DHCP. AP-PT hanya berfungsi sebagai bridge Layer 2, sehingga tidak memerlukan lease klien.
  
@@ -400,64 +461,6 @@ Khusus **CCTV Kota**, DHCP dipusatkan pada `SRV-STORAGE-DC` (`10.64.160.2`) deng
 
 ---
 
-## 3. Static Routing
-
-### 3.1 Ketentuan & Desain Perutean Hierarkis
-Pada perancangan static routing ini, seluruh LAN internal harus dapat saling berkomunikasi secara *end-to-end* dengan mematuhi ketentuan hierarki perutean:
-1. **Default Route Arah Keluar (Upstream)**:
-   - Default route (`0.0.0.0/0`) hanya diperbolehkan mengarah ke router di atasnya.
-   - Router cabang stub (R-DC, R-SELATAN, R-TIMUR, R-BARAT) hanya mengarahkan default route ke gateway R-PUSAT.
-   - R-PELABUHAN mengarahkan default route ke R-UTARA (`10.65.208.21`).
-   - R-UTARA mengarahkan default route ke R-PUSAT (`10.65.208.5`).
-   - R-PUSAT mengarahkan default route ke R-ISP (`203.0.113.34`).
-2. **Static Route Arah Dalam (Downstream)**:
-   - R-PUSAT wajib memiliki static route spesifik ke seluruh LAN milik router di bawahnya (R-DC, R-UTARA, R-PELABUHAN, R-SELATAN, R-TIMUR, dan R-BARAT).
-   - R-UTARA wajib memiliki static route spesifik ke seluruh LAN milik R-PELABUHAN (`10.64.192.0/19` dan `10.64.224.0/25`).
-
-### 3.2 Tabel Konfigurasi Static Route
-
-Berikut rincian tabel konfigurasi rute statis pada setiap router:
-
-| Router | Network Tujuan | Netmask | Next-Hop | Keterangan |
-|---|---|---|---|---|
-| **R-PUSAT** | `0.0.0.0` | `0.0.0.0` | `203.0.113.34` | Default route keluar ke R-ISP |
-| | `10.64.128.0` | `255.255.224.0` | `10.65.208.2` | CCTV Kota (R-DC) |
-| | `10.64.160.0` | `255.255.255.0` | `10.65.208.2` | Server & Storage DC (R-DC) |
-| | `10.64.0.0` | `255.255.192.0` | `10.65.208.6` | WiFi Publik Utara (R-UTARA) |
-| | `10.64.64.0` | `255.255.254.0` | `10.65.208.6` | Sensor Lalu Lintas (R-UTARA) |
-| | `10.65.208.20` | `255.255.255.252` | `10.65.208.6` | Interkoneksi L6 (R-UTARA <-> R-PELABUHAN) |
-| | `10.64.192.0` | `255.255.224.0` | `192.168.8.2` | SCADA Pelabuhan melalui Tunnel0 |
-| | `10.64.224.0` | `255.255.255.128` | `192.168.8.2` | Kantor Pelabuhan melalui Tunnel0 |
-| | `10.65.0.0` | `255.255.224.0` | `10.65.208.10` | WiFi Publik Selatan (R-SELATAN) |
-| | `10.65.32.0` | `255.255.255.128` | `10.65.208.10` | PJU Pintar Selatan (R-SELATAN) |
-| | `10.65.64.0` | `255.255.224.0` | `10.65.208.14` | WiFi Publik Timur (R-TIMUR) |
-| | `10.65.96.0` | `255.255.252.0` | `10.65.208.14` | Sensor Banjir Timur (R-TIMUR) |
-| | `10.65.128.0` | `255.255.224.0` | `10.65.208.18` | WiFi Publik Barat (R-BARAT) |
-| | `10.65.160.0` | `255.255.255.0` | `10.65.208.18` | Puskesmas & Sekolah (R-BARAT) |
-| **R-DC** | `0.0.0.0` | `0.0.0.0` | `10.65.208.1` | Default route upstream ke R-PUSAT |
-| **R-UTARA** | `0.0.0.0` | `0.0.0.0` | `10.65.208.5` | Default route upstream ke R-PUSAT |
-| | `10.64.192.0` | `255.255.224.0` | `10.65.208.22` | Sensor & SCADA (R-PELABUHAN) |
-| | `10.64.224.0` | `255.255.255.128` | `10.65.208.22` | Kantor Pelabuhan (R-PELABUHAN) |
-| **R-PELABUHAN** | `0.0.0.0` | `0.0.0.0` | `10.65.208.21` | Default route upstream ke R-UTARA |
-| **R-SELATAN** | `0.0.0.0` | `0.0.0.0` | `10.65.208.9` | Default route upstream ke R-PUSAT |
-| **R-TIMUR** | `0.0.0.0` | `0.0.0.0` | `10.65.208.13` | Default route upstream ke R-PUSAT |
-| **R-BARAT** | `0.0.0.0` | `0.0.0.0` | `10.65.208.17` | Default route upstream ke R-PUSAT |
-
-### 3.3 Verifikasi Konektivitas Antar-LAN
-Uji konektivitas dilakukan menggunakan pengujian `ping` antar-perangkat di berbagai LAN yang berbeda:
-- **PC-PEGAWAI-BALAIKOTA** (`10.65.192.2`) -> **SRV-STORAGE-DC** (`10.64.160.2`): Sukses (*Packet Loss 0%*).
-- **PC-PEGAWAI-BALAIKOTA** (`10.65.192.2`) -> **PC-KANTOR-PELABUHAN** (`10.64.224.2`): Sukses (*Packet Loss 0%*).
-- **SRV-STORAGE-DC** (`10.64.160.2`) -> **PC-PUSKESMAS-SEKOLAH-BARAT** (`10.65.160.2`): Sukses (*Packet Loss 0%*).
-- **PC-PJU-SELATAN** (`10.65.32.2`) -> **PC-SENSOR-BANJIR-TIMUR** (`10.65.96.2`): Sukses (*Packet Loss 0%*).
-
-Dengan konfigurasi ini, seluruh segmen jaringan privat kota terhubung penuh tanpa memerlukan dynamic routing protocol pada file utama ini.
-
-Bukti tabel static route pada R-PUSAT:
-
-![Static route R-PUSAT](./assets/bukti/Keisya/03-static-route-r-pusat.png)
-
----
-
 ## 5. Network Address Translation (NAT)
 
 ### 5.1 Ketentuan & Desain NAT Overload (PAT)
@@ -520,19 +523,19 @@ L       203.0.113.34/32 is directly connected, GigabitEthernet0/0
 *Tabel di atas membuktikan Router-ISP hanya mengetahui jaringan publik miliknya dan antarmuka interkoneksi ke R-PUSAT.*
 
 #### 2. Uji Ping dari Seluruh Subnet ke Server Publik 8.8.8.8
-- `PC-PEGAWAI-BALAIKOTA` (`10.65.192.2`) -> `ping 8.8.8.8`: **Success (Loss 0%)**
+- `PC-PEGAWAI-BALAIKOTA` (`10.65.192.3`) -> `ping 8.8.8.8`: **Success (Loss 0%)**
 - `SRV-STORAGE-DC` (`10.64.160.2`) -> `ping 8.8.8.8`: **Success (Loss 0%)**
-- `PC-KANTOR-PELABUHAN` (`10.64.224.2`) -> `ping 8.8.8.8`: **Success (Loss 0%)**
-- `PC-PUSKESMAS-SEKOLAH-BARAT` (`10.65.160.2`) -> `ping 8.8.8.8`: **Success (Loss 0%)**
+- `PC-KANTOR-PELABUHAN` (`10.64.224.3`) -> `ping 8.8.8.8`: **Success (Loss 0%)**
+- `PC-PUSKESMAS-SEKOLAH-BARAT` (`10.65.160.3`) -> `ping 8.8.8.8`: **Success (Loss 0%)**
 
 #### 3. Bukti Translasi Alamat (NAT Table Translation)
 Pengecekan translasi aktif pada R-PUSAT saat host internal melakukan ping/akses ke internet:
 ```cisco
 R-PUSAT#show ip nat translations
 Pro  Inside global     Inside local       Outside local      Outside global
-icmp 203.0.113.33:1     10.65.192.2:1      8.8.8.8:1          8.8.8.8:1
+icmp 203.0.113.33:1     10.65.192.3:1      8.8.8.8:1          8.8.8.8:1
 icmp 203.0.113.33:2     10.64.160.2:2      8.8.8.8:2          8.8.8.8:2
-icmp 203.0.113.33:3     10.64.224.2:3      8.8.8.8:3          8.8.8.8:3
+icmp 203.0.113.33:3     10.64.224.3:3      8.8.8.8:3          8.8.8.8:3
 ```
 Seluruh alamat IP privat berhasil ditranslasikan ke alamat publik tunggal `203.0.113.33` dengan pemetaan nomor port unik (PAT).
 
@@ -588,21 +591,21 @@ ip route 10.65.200.0 255.255.255.224 192.168.8.1
 ```
 
 ### 6.3 Verifikasi Jalur Tunnel (Traceroute)
-Hasil pengujian `tracert` dari `PC-PEGAWAI-BALAIKOTA` (`10.65.192.2`) menuju `PC-KANTOR-PELABUHAN` (`10.64.224.2`):
+Hasil pengujian `tracert` dari `PC-PEGAWAI-BALAIKOTA` (`10.65.192.3`) menuju `PC-KANTOR-PELABUHAN` (`10.64.224.3`):
 ```text
-PC>tracert 10.64.224.2
-Tracing route to 10.64.224.2 over a maximum of 30 hops: 
+PC>tracert 10.64.224.3
+Tracing route to 10.64.224.3 over a maximum of 30 hops: 
 
   1   0 ms      0 ms      0 ms      10.65.192.1
   2   0 ms      0 ms      0 ms      192.168.8.2
-  3   0 ms      0 ms      0 ms      10.64.224.2
+  3   0 ms      0 ms      0 ms      10.64.224.3
 
 Trace complete.
 ```
 **Analisis Hasil Traceroute**:
 - **Hop 1** (`10.65.192.1`): Default gateway di R-PUSAT (sub-interface `Gi0/2.10`).
 - **Hop 2** (`192.168.8.2`): Ujung tunnel GRE di R-PELABUHAN. Router perantara transit (**R-UTARA**) tidak muncul dalam daftar hop karena paket privat dienkapsulasi ke dalam payload paket GRE dan secara logis diteruskan langsung antar-ujung tunnel (*virtual point-to-point link*).
-- **Hop 3** (`10.64.224.2`): Host tujuan di Kantor Pelabuhan.
+- **Hop 3** (`10.64.224.3`): Host tujuan di Kantor Pelabuhan.
 
 Status `Tunnel0` pada R-PUSAT juga sudah `up/up` dengan alamat `192.168.8.1/30`:
 
@@ -718,10 +721,10 @@ Untuk membuktikan ketahanan sistem jaringan dinamis (*fault-tolerance*), dilakuk
 #### 1. Kondisi Normal (Link L1 Aktif)
 Pada kondisi normal, jalur komunikasi dari **Command Center (R-DC)** menuju **Balai Kota (R-PUSAT)** melewati link utama L1:
 ```text
-PC>tracert 10.65.192.2
+PC>tracert 10.65.192.3
   1   10.64.160.1 (Gateway R-DC)
   2   10.65.208.1 (R-PUSAT via GigabitEthernet0/0)
-  3   10.65.192.2 (PC-PEGAWAI-BALAIKOTA)
+  3   10.65.192.3 (PC-PEGAWAI-BALAIKOTA)
 ```
 
 #### 2. Simulasi Kegagalan Link Backbone (Link L1 Putus)
@@ -736,17 +739,17 @@ R-DC(config-if)#shutdown
 3. Jalur alternatif ditemukan secara otomatis melalui link cadangan **L7** (`Serial0/0/0`) menuju **R-UTARA**, kemudian melewati **L2** menuju **R-PUSAT**.
 
 #### 3. Hasil Pengujian Konektivitas Saat Link L1 Putus
-- Uji Ping dari `SRV-STORAGE-DC` (`10.64.160.2`) ke `PC-PEGAWAI-BALAIKOTA` (`10.65.192.2`): **Success (Loss 0%)**.
+- Uji Ping dari `SRV-STORAGE-DC` (`10.64.160.2`) ke `PC-PEGAWAI-BALAIKOTA` (`10.65.192.3`): **Success (Loss 0%)**.
 - Uji Ping ke Server Internet `8.8.8.8`: **Success (Loss 0%)**.
 - Hasil `tracert` dari `SRV-STORAGE-DC` ke `PC-PEGAWAI-BALAIKOTA`:
 ```text
-PC>tracert 10.65.192.2
-Tracing route to 10.65.192.2 over a maximum of 30 hops: 
+PC>tracert 10.65.192.3
+Tracing route to 10.65.192.3 over a maximum of 30 hops: 
 
   1   0 ms      0 ms      0 ms      10.64.160.1
   2   0 ms      0 ms      0 ms      10.65.208.26
   3   0 ms      0 ms      0 ms      10.65.208.5
-  4   0 ms      0 ms      0 ms      10.65.192.2
+  4   0 ms      0 ms      0 ms      10.65.192.3
 
 Trace complete.
 ```
@@ -754,7 +757,7 @@ Trace complete.
 - **Hop 1** (`10.64.160.1`): Gateway R-DC.
 - **Hop 2** (`10.65.208.26`): R-UTARA melalui link darurat Serial L7 (`10.65.208.24/30`).
 - **Hop 3** (`10.65.208.5`): R-PUSAT melalui link Gigabit L2.
-- **Hop 4** (`10.65.192.2`): Tujuan akhir di Balai Kota.
+- **Hop 4** (`10.65.192.3`): Tujuan akhir di Balai Kota.
 
 Screenshot berikut diambil saat `GigabitEthernet0/0` R-DC dimatikan. Neighbor ke R-PUSAT turun, tetapi neighbor `3.3.3.3` melalui `Serial0/0/0` tetap `FULL`. Rute `10.65.192.0/21` berpindah ke `10.65.208.26` dan ping berhasil 5/5.
 
@@ -771,23 +774,23 @@ Setelah menunggu konvergensi, neighbor ke R-PUSAT dan R-UTARA kembali berstatus 
 
 ## 8. Layanan Server
 
-Layanan ditempatkan sesuai fungsi dua server pada topologi. Karena teks gambar Soal 8 tidak tersedia di repository, nama domain dan akun berikut dipakai konsisten pada kedua berkas `.pkt`.
+Layanan ditempatkan pada dua server sesuai perannya. Pengujian di bawah ini dijalankan pada `K08_CIDR.pkt`, dan konfigurasi DNS serta web yang sama juga diterapkan pada `K08_CIDR_OSPF.pkt`.
 
-### 8.1 SRV-BALAIKOTA â€” DNS dan HTTP
+### 8.1 SRV-BALAIKOTA - DNS dan HTTP
 
 - IP statis: `10.65.200.2/27`, gateway `10.65.200.1`.
 - DNS aktif dengan record berikut:
-  - `www.k8.local` dan `srv-balaikota.k8.local` â†’ `10.65.200.2`
-  - `ftp.k8.local`, `mail.k8.local`, `mail.k8.com`, dan `srv-storage.k8.local` â†’ `10.64.160.2`
-- HTTP aktif dan menampilkan portal Pemerintah Kota Kelompok 8.
-- Pengujian `http://www.k8.local` dari PC klien berhasil, sekaligus membuktikan resolusi DNS dan HTTP.
+  - `www.k8.smartcity.lab` dan `srv-balaikota.k8.smartcity.lab` -> `10.65.200.2`
+  - `ftp.k8.smartcity.lab`, `mail.k8.smartcity.lab`, dan `srv-storage.k8.smartcity.lab` -> `10.64.160.2`
+- HTTP aktif dan menampilkan halaman "Portal Smart City Surabaya" dengan nomor kelompok 8.
+- Pengujian `http://www.k8.smartcity.lab` dari PC klien berhasil, sekaligus membuktikan resolusi DNS dan HTTP.
 
-### 8.2 SRV-STORAGE-DC â€” DHCP CCTV, FTP, dan Email
+### 8.2 SRV-STORAGE-DC - DHCP CCTV, FTP, dan Email
 
 - IP statis: `10.64.160.2/24`, gateway `10.64.160.1`, DNS `10.65.200.2`.
 - DHCP CCTV melayani `10.64.128.0/19` melalui DHCP relay R-DC.
 - FTP aktif dengan akun `admin-k8`; hak akses baca/tulis/list/delete/rename telah diaktifkan. Login dan perintah `dir` berhasil dari PC Balai Kota.
-- Email memakai domain `k8.com`, akun `admin@k8.com` dan `petugas@k8.com`. Pengujian SMTP/POP3 dari petugas ke admin berhasil.
+- Email memakai domain `k8.smartcity.lab`, akun `admin@k8.smartcity.lab` dan `petugas@k8.smartcity.lab`. Pengujian SMTP/POP3 dari petugas ke admin berhasil.
 
 ### 8.3 Hasil uji CIDR dan OSPF
 
