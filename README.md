@@ -4,11 +4,11 @@
 
 | Nama                          | NRP        | Peran & Pembagian Kerja                                                                 |
 | ----------------------------- | ---------- | --------------------------------------------------------------------------------------- |
-| Yovi Prayudya Rizky Ramadhani | 5027251107 | **A - Topologi dan pengalamatan**: VLSM/CIDR, tabel revisi, topologi CPT, dan IP dasar |
+| Yovi Prayudya Rizky Ramadhani | 5027251107 | **A - Topologi dan IP**: VLSM/CIDR, tabel revisi, topologi CPT, dan IP dasar |
 | Askhabul                      | 5027251049 | **B - Routing dan keamanan**: static routing, NAT, GRE, OSPF, dan link L7              |
 | Keisya                        | 5027251068 | **C - Layanan dan dokumentasi**: DHCP, server, README, bukti, dan laporan             |
 
-## 1. Topologi dan Pengalamatan
+## 1. Topologi
 
 ![image](./assets/soal/soal-1.png)
 
@@ -319,7 +319,7 @@ Tabel lengkap ada di spreadsheet berikut. Kolom alasan revisi menjelaskan perbed
 ## 3. Static Routing
 
 ### 3.1 Aturan static routing
-Pada perancangan static routing ini, seluruh LAN internal harus dapat saling berkomunikasi secara *end-to-end* dengan mematuhi ketentuan hierarki perutean:
+Aturan static routing yang dipakai:
 1. **Default Route Arah Keluar (Upstream)**:
    - Default route (`0.0.0.0/0`) hanya diperbolehkan mengarah ke router di atasnya.
    - Router cabang stub (R-DC, R-SELATAN, R-TIMUR, R-BARAT) hanya mengarahkan default route ke gateway R-PUSAT.
@@ -331,8 +331,6 @@ Pada perancangan static routing ini, seluruh LAN internal harus dapat saling ber
    - R-UTARA wajib memiliki static route spesifik ke seluruh LAN milik R-PELABUHAN (`10.64.192.0/19` dan `10.64.224.0/25`).
 
 ### 3.2 Tabel Konfigurasi Static Route
-
-Berikut rincian tabel konfigurasi rute statis pada setiap router:
 
 | Router | Network Tujuan | Netmask | Next-Hop | Keterangan |
 |---|---|---|---|---|
@@ -360,7 +358,6 @@ Berikut rincian tabel konfigurasi rute statis pada setiap router:
 | **R-BARAT** | `0.0.0.0` | `0.0.0.0` | `10.65.208.17` | Default route upstream ke R-PUSAT |
 
 ### 3.3 Uji konektivitas antar-LAN
-Uji konektivitas dilakukan menggunakan pengujian `ping` antar-perangkat di berbagai LAN yang berbeda:
 - **PC-PEGAWAI-BALAIKOTA** (`10.65.192.3`) -> **SRV-STORAGE-DC** (`10.64.160.2`): Sukses (*Packet Loss 0%*).
 - **PC-PEGAWAI-BALAIKOTA** (`10.65.192.3`) -> **PC-KANTOR-PELABUHAN** (`10.64.224.3`): Sukses (*Packet Loss 0%*).
 - **SRV-STORAGE-DC** (`10.64.160.2`) -> **PC-PUSKESMAS-SEKOLAH-BARAT** (`10.65.160.3`): Sukses (*Packet Loss 0%*).
@@ -370,13 +367,13 @@ Uji konektivitas dilakukan menggunakan pengujian `ping` antar-perangkat di berba
 
 ---
 
-## 4. Pengalamatan IP dan DHCP
+## 4. IP dan DHCP
 
 ![image](./assets/soal/soal-4.png)
 
-### 4.1 Interface router dan server memakai IP statis
+### 4.1 IP statis
  
-Seluruh interface router dikonfigurasi dengan IP statis lewat CLI (`ip address` pada interface atau sub-interface). Seluruh server dikonfigurasi statis lewat tab **Desktop, IP Configuration**, dengan pilihan **Static**. Perangkat pengguna (PC dan webcam) mendapat IP dinamis dari DHCP. AP-PT hanya berfungsi sebagai bridge Layer 2, sehingga tidak memerlukan lease klien.
+Semua interface router pakai IP statis via CLI. Server diset dari **Desktop, IP Configuration**. PC dan webcam dapat IP dari DHCP. AP-PT hanya menjadi bridge Layer 2.
  
 ### Alamat interface router
  
@@ -422,9 +419,7 @@ Seluruh interface router dikonfigurasi dengan IP statis lewat CLI (`ip address` 
  
 Alamat `.2` dipakai untuk server, tepat setelah gateway `.1`. Jadi rentang DHCP pengguna di subnet yang sama harus dimulai setelah alamat tersebut supaya tidak bentrok.
  
-### Bukti konektivitas
- 
-Link antar-tetangga diuji dengan `ping` dan `show ip interface brief`, dengan hasil:
+### Cek koneksi
  
 - R-UTARA dan R-PUSAT saling ping berhasil (5/5), jadi L2 aktif.
 - R-PELABUHAN ke R-UTARA berhasil (5/5), jadi L6 aktif.
@@ -433,9 +428,9 @@ Link antar-tetangga diuji dengan `ping` dan `show ip interface brief`, dengan ha
 Ping dari LAN di balik router ke jaringan lain (misalnya server DC ke R-PUSAT) belum berhasil pada tahap ini karena static route belum dipasang. Itu bagian Soal 3.
 
 
-### 4.2 DHCP untuk seluruh LAN pengguna
+### 4.2 DHCP LAN
 
-DHCP dijalankan pada router gateway masing-masing LAN. Alamat gateway `.1` dan alamat statis server `.2` dikecualikan agar tidak terjadi konflik. Semua pool membagikan DNS `10.65.200.2`.
+DHCP dijalankan di router gateway masing-masing LAN. Gateway `.1` dan server `.2` dikeluarkan dari pool biar tidak bentrok. Semua pool memakai DNS `10.65.200.2`.
 
 | LAN pengguna | Network | Gateway | Lease perangkat uji |
 |---|---|---|---|
@@ -449,9 +444,9 @@ DHCP dijalankan pada router gateway masing-masing LAN. Alamat gateway `.1` dan a
 
 Khusus **CCTV Kota**, DHCP dipusatkan pada `SRV-STORAGE-DC` (`10.64.160.2`) dengan pool `10.64.128.0/19`. Karena server berada di subnet berbeda, sub-interface `R-DC Gi0/1.10` memakai `ip helper-address 10.64.160.2`. Webcam memperoleh `10.64.128.3/19`, gateway `10.64.128.1`, dan DNS `10.65.200.2` pada interface kabel `GigabitEthernet3`.
 
-### 4.3 Verifikasi DHCP
+### 4.3 Cek DHCP
 
-- Seluruh PC memperoleh alamat, mask, gateway, dan DNS sesuai pool.
+- Semua PC mendapat IP, mask, gateway, dan DNS sesuai pool.
 - PJU Selatan telah dikoreksi menjadi mask `/25` (`255.255.255.128`), bukan `/20`.
 - Ping PJU Selatan (`10.65.32.3`) ke Sensor Banjir Timur (`10.65.96.3`) berhasil dengan **0% packet loss**.
 - Bukti pengujian CIDR tersimpan di `assets/bukti/CIDR`.
@@ -461,24 +456,23 @@ Khusus **CCTV Kota**, DHCP dipusatkan pada `SRV-STORAGE-DC` (`10.64.160.2`) deng
 ## 5. Network Address Translation (NAT)
 
 ### 5.1 Aturan NAT Overload (PAT)
-Ketentuan Soal 5 mengharuskan:
-1. Seluruh host di jaringan internal kota dapat mengakses internet publik (Server `8.8.8.8`) menggunakan satu alamat IP publik milik R-PUSAT (`203.0.113.33`).
+Aturannya:
+1. Semua host internal dapat mengakses Server `8.8.8.8` lewat IP publik R-PUSAT (`203.0.113.33`).
 2. Router ISP (`Router-ISP`) **dilarang keras** memiliki rute ke alamat IP privat internal (`10.64.0.0/15`). ISP hanya mengenal jaringan publik (`203.0.113.32/30` dan `8.8.8.0/24`).
 
 NAT Overload (PAT) dipasang pada R-PUSAT.
 
 ### 5.2 Konfigurasi NAT pada R-PUSAT
-Langkah konfigurasi pada R-PUSAT:
 1. Membuat Standard Access List (`access-list 1`) untuk mencakup seluruh blok IP privat kelompok 8 (`10.64.0.0/15`):
    ```cisco
    access-list 1 permit 10.64.0.0 0.1.255.255
    ```
-2. Menentukan antarmuka luar (*outside interface*) yang mengarah ke ISP:
+2. Menentukan interface luar (*outside*) ke ISP:
    ```cisco
    interface GigabitEthernet0/0
     ip nat outside
    ```
-3. Menentukan seluruh antarmuka dalam (*inside interfaces*) yang terhubung ke jaringan internal:
+3. Menentukan interface dalam (*inside*) ke jaringan internal:
    ```cisco
    interface GigabitEthernet0/1
     ip nat inside
@@ -534,7 +528,7 @@ icmp 203.0.113.33:1     10.65.192.3:1      8.8.8.8:1          8.8.8.8:1
 icmp 203.0.113.33:2     10.64.160.2:2      8.8.8.8:2          8.8.8.8:2
 icmp 203.0.113.33:3     10.64.224.3:3      8.8.8.8:3          8.8.8.8:3
 ```
-Seluruh alamat IP privat berhasil ditranslasikan ke alamat publik tunggal `203.0.113.33` dengan pemetaan nomor port unik (PAT).
+Semua IP privat ditranslasikan ke `203.0.113.33` dengan nomor port yang berbeda.
 
 ![Routing table Router-ISP](./assets/bukti/Keisya/05-rute-router-isp.png)
 
@@ -613,7 +607,7 @@ dengan IPsec.
 
 ---
 
-## 7. Dynamic Routing OSPF & Redundancy Test
+## 7. OSPF dan Failover
 
 ### 7.1 Berkas OSPF
 
@@ -629,14 +623,14 @@ L7 ditambahkan sebagai jalur cadangan antara **R-DC** dan **R-UTARA**:
    - IP `R-DC:Serial0/0/0`: `10.65.208.25/30` (Clock Rate 64000 DCE)
    - IP `R-UTARA:Serial0/0/0`: `10.65.208.26/30`
 
-### 7.3 Konfigurasi OSPF Area 0 pada Ke-7 Router
-Seluruh static route antar-router pada file utama dihapus, lalu dikonfigurasikan OSPF Process ID 1 dalam **Area 0**.
+### 7.3 OSPF Area 0
+Static route antar-router dihapus, lalu ketujuh router memakai OSPF Process ID 1 di **Area 0**.
 
-#### 1. Ketentuan Passive Interface
+#### 1. Passive interface
 Sub-interface LAN dibuat `passive-interface` supaya OSPF tidak mencari neighbor
 di jaringan pengguna.
 
-#### 2. Ketentuan Default Route OSPF
+#### 2. Default route OSPF
 - R-PUSAT adalah satu-satunya router yang mengonfigurasi default route statis ke internet (`ip route 0.0.0.0 0.0.0.0 203.0.113.34`).
 - Di bawah konfigurasi OSPF R-PUSAT, diaktifkan perintah:
   ```cisco
@@ -645,7 +639,7 @@ di jaringan pengguna.
   ```
 - Router cabang menerima default route sebagai **O*E2**, jadi tidak perlu default route manual.
 
-#### 3. Rincian Konfigurasi OSPF Tiap Router
+#### 3. Konfigurasi tiap router
 
 | Router | Router-ID | Network yang Di-advertise (Area 0) | Passive Interface |
 |---|---|---|---|
@@ -658,16 +652,16 @@ di jaringan pengguna.
 | **R-BARAT** | `7.7.7.7` | `10.65.208.16 0.0.0.3` (L5)<br>`10.65.128.0 0.0.31.255` (WiFi Barat)<br>`10.65.160.0 0.0.0.255` (Puskesmas Barat) | `GigabitEthernet0/0.10`<br>`GigabitEthernet0/0.20` |
 
 ### 7.4 Hasil OSPF
-#### 1. OSPF Neighbor Adjacency di R-DC
+#### 1. Neighbor R-DC
 ```cisco
 R-DC#show ip ospf neighbor
 Neighbor ID     Pri   State           Dead Time   Address         Interface
 1.1.1.1           1   FULL/BDR        00:00:33    10.65.208.1     GigabitEthernet0/0
 3.3.3.3           0   FULL/  -        00:00:38    10.65.208.26    Serial0/0/0
 ```
-*Terlihat R-DC membentuk hubungan ketetanggaan `FULL` ke R-PUSAT via GigabitEthernet0/0 dan ke R-UTARA via Serial0/0/0.*
+R-DC neighbor `FULL` ke R-PUSAT lewat GigabitEthernet0/0 dan ke R-UTARA lewat Serial0/0/0.
 
-#### 2. Penerimaan Default Route OSPF di Router Cabang
+#### 2. Default route di router cabang
 Contoh pada `R-BARAT`:
 ```cisco
 R-BARAT#show ip route ospf
@@ -681,8 +675,6 @@ O*E2 0.0.0.0/0 [110/1] via 10.65.208.17, 00:04:12, GigabitEthernet0/1
 ```
 Entri `O*E2 0.0.0.0/0` menunjukkan default route sudah diterima dari R-PUSAT.
 
-Bukti neighbor dan rute OSPF pada file `K08_CIDR_OSPF.pkt`:
-
 ![Neighbor OSPF R-PUSAT](./assets/bukti/Keisya/07-ospf-neighbor-r-pusat.png)
 
 ![Rute OSPF](./assets/bukti/Keisya/07-rute-ospf.png)
@@ -691,8 +683,9 @@ Bukti neighbor dan rute OSPF pada file `K08_CIDR_OSPF.pkt`:
 
 ### 7.5 Uji Failover
 
-#### 1. Kondisi Normal (Link L1 Aktif)
-Pada kondisi normal, jalur komunikasi dari **Command Center (R-DC)** menuju **Balai Kota (R-PUSAT)** melewati link utama L1:
+#### 1. L1 aktif
+
+Jalur R-DC ke R-PUSAT memakai L1:
 ```text
 PC>tracert 10.65.192.3
   1   10.64.160.1 (Gateway R-DC)
@@ -700,8 +693,9 @@ PC>tracert 10.65.192.3
   3   10.65.192.3 (PC-PEGAWAI-BALAIKOTA)
 ```
 
-#### 2. Simulasi Kegagalan Link Backbone (Link L1 Putus)
-Interface utama `GigabitEthernet0/0` pada R-DC dipadamkan (`shutdown`) untuk menyimulasikan kabel backbone L1 putus:
+#### 2. L1 dimatikan
+
+`GigabitEthernet0/0` pada R-DC dimatikan dengan `shutdown`:
 ```cisco
 R-DC(config)#interface GigabitEthernet0/0
 R-DC(config-if)#shutdown
@@ -709,7 +703,7 @@ R-DC(config-if)#shutdown
 Setelah L1 dimatikan, neighbor R-DC ke R-PUSAT turun. Trafik kemudian pindah
 ke L7 menuju R-UTARA dan kembali ke R-PUSAT lewat L2.
 
-#### 3. Hasil Pengujian Konektivitas Saat Link L1 Putus
+#### 3. Hasil saat L1 mati
 - Uji Ping dari `SRV-STORAGE-DC` (`10.64.160.2`) ke `PC-PEGAWAI-BALAIKOTA` (`10.65.192.3`): **Success (Loss 0%)**.
 - Uji Ping ke Server Internet `8.8.8.8`: **Success (Loss 0%)**.
 - Hasil `tracert` dari `SRV-STORAGE-DC` ke `PC-PEGAWAI-BALAIKOTA`:
@@ -726,11 +720,11 @@ Trace complete.
 ```
 Traceroute berubah menjadi R-DC, R-UTARA, R-PUSAT, lalu PC Balai Kota.
 
-Screenshot berikut diambil saat `GigabitEthernet0/0` R-DC dimatikan. Neighbor ke R-PUSAT turun, tetapi neighbor `3.3.3.3` melalui `Serial0/0/0` tetap `FULL`. Rute `10.65.192.0/21` berpindah ke `10.65.208.26` dan ping berhasil 5/5.
+Saat `GigabitEthernet0/0` dimatikan, neighbor ke R-PUSAT turun. Neighbor `3.3.3.3` lewat Serial0/0/0 tetap `FULL`, rute pindah ke `10.65.208.26`, dan ping berhasil 5/5.
 
 ![Uji failover OSPF melalui L7](./assets/bukti/Keisya/07-ospf-failover-l7.png)
 
-#### 4. Pemulihan Jalur
+#### 4. L1 diaktifkan lagi
 
 Setelah L1 diaktifkan kembali, neighbor ke R-PUSAT kembali `FULL` dan rute
 kembali memakai link utama.
@@ -741,8 +735,6 @@ kembali memakai link utama.
 
 ## 8. Layanan Server
 
-Layanan dibagi antara SRV-BALAIKOTA dan SRV-STORAGE-DC.
-
 ### 8.1 SRV-BALAIKOTA - DNS dan HTTP
 
 - IP statis: `10.65.200.2/27`, gateway `10.65.200.1`.
@@ -752,11 +744,7 @@ Layanan dibagi antara SRV-BALAIKOTA dan SRV-STORAGE-DC.
 - HTTP aktif dan menampilkan halaman "Portal Smart City Surabaya" dengan nomor kelompok 8.
 - `http://www.k8.smartcity.lab` berhasil dibuka dari PC klien.
 
-**Bukti record DNS aktif**
-
 ![Record DNS k8.smartcity.lab](./assets/bukti/Keisya/11-dns-records-k8-smartcity-lab.png)
-
-**Bukti akses web melalui nama domain**
 
 ![Portal Smart City Surabaya](./assets/bukti/Keisya/08-web-portal-smart-city.png)
 
@@ -764,30 +752,18 @@ Layanan dibagi antara SRV-BALAIKOTA dan SRV-STORAGE-DC.
 
 - IP statis: `10.64.160.2/24`, gateway `10.64.160.1`, DNS `10.65.200.2`.
 - DHCP CCTV melayani `10.64.128.0/19` melalui DHCP relay R-DC.
-- FTP aktif dengan akun `admin-k8`; hak akses baca/tulis/list/delete/rename telah diaktifkan. Login dan perintah `dir` berhasil dari PC Balai Kota.
-- Email memakai domain `k8.smartcity.lab`, akun `admin@k8.smartcity.lab` dan `petugas@k8.smartcity.lab`. Pengujian SMTP/POP3 dari petugas ke admin berhasil.
-
-**Bukti DHCP CCTV**
+- FTP aktif dengan akun `admin-k8`; semua permission diaktifkan. Login dan perintah `dir` berhasil dari PC Balai Kota.
+- Email memakai domain `k8.smartcity.lab`, akun `admin@k8.smartcity.lab` dan `petugas@k8.smartcity.lab`. Kirim dan terima email antar akun berhasil.
 
 ![DHCP CCTV dari SRV-STORAGE-DC](./assets/bukti/OSPF/02-dhcp-cctv-helper.png)
 
-**Bukti login dan daftar direktori FTP**
-
 ![FTP login dan dir berhasil](./assets/bukti/CIDR/05-ftp-login-dir-success.png)
 
-**Bukti kirim email melalui SMTP**
-
 ![Kirim email k8.smartcity.lab](./assets/bukti/Keisya/09-email-send-k8-smartcity-lab.png)
-
-**Bukti penerimaan email melalui POP3**
 
 ![Terima email k8.smartcity.lab](./assets/bukti/Keisya/10-email-receive-k8-smartcity-lab.png)
 
 ### 8.3 Hasil uji CIDR dan OSPF
-
-Gambar di bawah ini adalah hasil uji langsung dari Packet Tracer. Bukti lama
-yang masih memakai `k8.local` atau `k8.com` tidak dipakai sebagai bukti
-konfigurasi akhir.
 
 #### Pengujian pada K08_CIDR.pkt
 
