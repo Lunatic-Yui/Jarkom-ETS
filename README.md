@@ -19,9 +19,6 @@ Topologi acuan dari soal:
 
 ### Tampilan akhir topologi
 
-Tampilan akhir disimpan dalam dua viewport agar nama perangkat, label subnet,
-dan jalur kabel tetap terbaca tanpa saling menutupi.
-
 **CIDR - bagian atas**
 
 ![Topologi CIDR bagian atas](./assets/jawaban/topologi-cidr-atas-rapi.png)
