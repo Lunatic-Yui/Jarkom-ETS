@@ -10,7 +10,7 @@ Classroom dan isi repo `Lunatic-Yui/Jarkom-ETS`.
 | 1 | Topologi CIDR sesuai Gambar 1, L1-L6, R-ISP, Server 8.8.8.8 | Selesai | `project/K08_CIDR.pkt`, `project/K08_CIDR_OSPF.pkt` |
 | 1 | Desain tiap lokasi (switch, VLAN, media, penambahan port) dijelaskan | Selesai | README bagian "Desain tiap lokasi", "Alasan pemilihan perangkat", "Penambahan port pada R-PUSAT" |
 | 1 | Nama perangkat diganti (R-PUSAT, SW-BALAIKOTA, PC-CCTV-KOTA, dst.) | Selesai | Terlihat pada tangkapan layar topologi |
-| 1 | Label tiap LAN berisi nama subnet, Network ID/prefix, jumlah host | Selesai | Seluruh label diperiksa dalam viewport atas dan bawah; bukti ada di `assets/jawaban/topologi-*-rapi.png` |
+| 1 | Label tiap LAN berisi nama subnet, Network ID/prefix, jumlah host | Selesai | Bukti ada di `assets/jawaban/topologi-cidr-full.png` dan `assets/jawaban/topologi-ospf-full.png` |
 | 2 | Tabel VLSM: subnet, network ID, prefix, host range, broadcast, gateway | Selesai | Sheet `Revisi VLSM`, 20 subnet termasuk L1-L6 |
 | 2 | Tabel CIDR (summary per router) | Selesai | Sheet `Revisi CIDR` |
 | 2 | Tabel revisi: jawaban UTS, perbaikan, alasan | Selesai | Baris "Kesalahan/Alasan" pada ketiga sheet |
