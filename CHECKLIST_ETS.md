@@ -8,8 +8,8 @@
 | 1 | Desain tiap lokasi, VLAN, media, dan penambahan port dijelaskan | Selesai | [Desain tiap lokasi](./README.md#desain-tiap-lokasi), [alasan pemilihan perangkat](./README.md#alasan-pemilihan-perangkat-dan-media), dan [penambahan port R-PUSAT](./README.md#penambahan-port-pada-r-pusat) |
 | 1 | Nama perangkat diganti sesuai tempat dan fungsi | Selesai | [Topologi CIDR](./assets/jawaban/topologi-cidr-full.png) dan [topologi OSPF](./assets/jawaban/topologi-ospf-full.png) |
 | 1 | Label tiap LAN memuat nama subnet, Network ID/prefix, dan jumlah host | Selesai | [Topologi CIDR](./assets/jawaban/topologi-cidr-full.png) dan [topologi OSPF](./assets/jawaban/topologi-ospf-full.png) |
-| 2 | Tabel VLSM berisi subnet, network ID, prefix, host range, broadcast, dan gateway | Selesai | Sheet `Revisi VLSM` pada [Revisi Tabel Jarkom ETS.xlsx](./Revisi%20Tabel%20Jarkom%20ETS.xlsx) |
-| 2 | Tabel CIDR per router | Selesai | Sheet `Revisi CIDR` pada [Revisi Tabel Jarkom ETS.xlsx](./Revisi%20Tabel%20Jarkom%20ETS.xlsx) |
+| 2 | Tabel VLSM berisi subnet, network ID, prefix, host range, broadcast, dan gateway | Selesai | [Screenshot VLSM](./assets/jawaban/tabel/tabel-revisi-vlsm.png) dan sheet `Revisi VLSM` pada [file Excel](./Revisi%20Tabel%20Jarkom%20ETS.xlsx) |
+| 2 | Tabel CIDR per router | Selesai | [Screenshot CIDR](./assets/jawaban/tabel/tabel-revisi-cidr.png) dan sheet `Revisi CIDR` pada [file Excel](./Revisi%20Tabel%20Jarkom%20ETS.xlsx) |
 | 2 | Jawaban UTS, perbaikan, dan alasan dicatat | Selesai | [Revisi Tabel Jarkom ETS.xlsx](./Revisi%20Tabel%20Jarkom%20ETS.xlsx) |
 | 2 | Mask `/25`, `/27`, dan `/30` sudah benar | Selesai | [Tabel subnetting](./README.md#soal-2-tabel-vlsm-cidr-dan-revisi) |
 | 3 | Default route cabang ke pusat dan pusat ke ISP | Selesai | [Aturan static routing](./README.md#31-aturan-static-routing) |
