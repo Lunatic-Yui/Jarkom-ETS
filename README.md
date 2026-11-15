@@ -442,7 +442,8 @@ Buat tabel VLSM dan CIDR yang memuat nama subnet, network ID, prefix, rentang ho
 
 Tabel lengkap ada di spreadsheet berikut. Kolom alasan revisi menjelaskan perbedaan dengan jawaban UTS.
 
-[Revisi Tabel Jarkom ETS.xlsx](./Revisi%20Tabel%20Jarkom%20ETS.xlsx)
+- File Excel: [Revisi Tabel Jarkom ETS.xlsx](./Revisi%20Tabel%20Jarkom%20ETS.xlsx)
+- Versi online: [Revisi Tabel Jarkom ETS di Google Sheets](https://docs.google.com/spreadsheets/d/1AZ2lz4vUmPSDnBboh_9l71gLhLvNkyjiI63zHFS2nsc/edit?gid=0#gid=0)
 
 Screenshot berikut diambil dari spreadsheet Kelompok 8. Tabel tidak ditulis ulang di README supaya isinya tetap sama dengan file Excel.
 
