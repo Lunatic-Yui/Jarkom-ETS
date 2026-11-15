@@ -1,4 +1,4 @@
-# JARKOM-ETS
+﻿# JARKOM-ETS
 
 Repositori: [github.com/Lunatic-Yui/Jarkom-ETS](https://github.com/Lunatic-Yui/Jarkom-ETS)
 
@@ -38,7 +38,6 @@ Repositori: [github.com/Lunatic-Yui/Jarkom-ETS](https://github.com/Lunatic-Yui/J
     - [Tabel revisi VLSM](#tabel-revisi-vlsm)
     - [Tabel revisi CIDR](#tabel-revisi-cidr)
     - [Pohon alokasi CIDR](#pohon-alokasi-cidr)
-  - [Langkah pengerjaan](#langkah-pengerjaan-kelompok-8-1)
 - [Soal 3: Static Routing](#soal-3-static-routing)
   - [Pertanyaan](#pertanyaan-soal-3)
   - [Jawaban](#jawaban-soal-3)
@@ -103,7 +102,6 @@ Repositori: [github.com/Lunatic-Yui/Jarkom-ETS](https://github.com/Lunatic-Yui/J
   - [8.3 Hasil uji CIDR dan OSPF](#83-hasil-uji-cidr-dan-ospf)
     - [K08_CIDR.pkt](#pengujian-pada-k08_cidrpkt)
     - [K08_CIDR_OSPF.pkt](#pengujian-pada-k08_cidr_ospfpkt)
-- [Checklist akhir](#checklist-akhir)
 - [Video Demonstrasi](#video-demonstrasi)
 
 ## Soal 1: Topologi
@@ -513,14 +511,6 @@ flowchart LR
 ```
 
 Link `L7` antara R-DC dan R-UTARA hanya ada pada `K08_CIDR_OSPF.pkt` dan memakai `10.65.208.24/30`, sehingga masih berada di dalam blok backbone `10.65.208.0/27`.
-
-### Langkah Pengerjaan Kelompok 8
-
-1. Kami mencatat kebutuhan host semua LAN dan link L1-L6 dari jawaban UTS.
-2. Kami menentukan prefix, network ID, rentang host, broadcast, dan gateway tiap subnet.
-3. Kami menyusun alokasi VLSM dari kebutuhan host terbesar ke terkecil.
-4. Kami membuat ringkasan CIDR berdasarkan blok jaringan tiap router.
-5. Kami mencatat nilai yang diperbaiki beserta alasannya pada tabel revisi.
 
 ---
 
@@ -1163,43 +1153,6 @@ Server email yang dipakai kedua PC adalah `mail.k8.smartcity.lab`, baik untuk PO
 
 ![Ping internet setelah perbaikan](./assets/bukti/OSPF/14-ping-internet-setelah-fix.png)
 
-## Checklist Akhir
-
-Status lengkap per nomor soal ada di [CHECKLIST_ETS.md](./CHECKLIST_ETS.md).
-
 ## Video Demonstrasi
 
 Video ETS Kelompok 8: [Tonton di YouTube](https://youtu.be/z-XkvmxTZOw)
-
-Pembagian bagian dan durasi:
-
-| Bagian | Menit | Pembicara |
-|---|---|---|
-| 0 Pembukaan | 1 | A |
-| 1 Topologi | 2 | A |
-| 2 Subnetting | 2 | A |
-| 3 Static routing | 4 | B |
-| 4 DHCP | 3 | B |
-| 5 NAT | 2 | B |
-| 6 Tunnel GRE | 3 | B |
-| 7 OSPF dan failover | 5 | C |
-| 8 Layanan aplikasi | 5 | C |
-| 9 Penutup | 3 | C |
-
-Checklist rekaman:
-
-- [x] Bagian 0 pembukaan
-- [x] Bagian 1 topologi
-- [x] Bagian 2 subnetting
-- [x] Bagian 3 static routing
-- [x] Bagian 4 DHCP
-- [x] Bagian 5 NAT
-- [x] Bagian 6 tunnel GRE
-- [x] Bagian 7 OSPF dan failover
-- [x] Bagian 8 layanan aplikasi
-- [x] Bagian 9 penutup
-- [x] Video digabung menjadi satu file 30 menit
-- [x] Diunggah ke YouTube sebagai Unlisted
-- [ ] Link video dibuka dari perangkat lain untuk memastikan bisa diakses
-- [x] Link ditempel pada bagian ini
-- [x] ZIP final dibuat ulang

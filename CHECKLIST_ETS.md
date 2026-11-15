@@ -83,8 +83,8 @@
 
 | Anggota | Peran | Pekerjaan |
 |---|---|---|
-| Yovi (5027251107) | A - Topologi dan subnetting | Topologi CPT, VLSM/CIDR, tabel revisi, penamaan, label, IP dasar, serta video bagian 0-2 |
-| Askhabul (5027251049) | B - Routing dan DHCP | Static routing, DHCP PC/CCTV, NAT, GRE, serta video bagian 3-6 |
-| Keisya (5027251068) | C - OSPF dan layanan | OSPF, L7, failover, DNS, web, FTP, email, serta video bagian 7-9 |
+| Yovi Prayudya Rizky Ramadhani (5027251107) | A - Topologi dan subnetting | Topologi CPT, VLSM/CIDR, tabel revisi, penamaan, label, IP dasar, serta video bagian 0-2 |
+| Ashkhabil Abror Budihardjo (5027251049) | B - Routing dan DHCP | Static routing, DHCP PC/CCTV, NAT, GRE, serta video bagian 3-6 |
+| Keisya Halimah Mulia (5027251068) | C - OSPF dan layanan | OSPF, L7, failover, DNS, web, FTP, email, serta video bagian 7-9 |
 
 README, laporan, bukti, dan persiapan video dikerjakan bersama. Tiap anggota menulis dan mengecek bagian yang menjadi tugasnya.
