@@ -1,5 +1,7 @@
 # JARKOM-ETS
 
+Repositori: [github.com/Lunatic-Yui/Jarkom-ETS](https://github.com/Lunatic-Yui/Jarkom-ETS)
+
 ## Anggota Kelompok
 
 | Nama | NRP | Peran & Pembagian Kerja |
