@@ -37,6 +37,7 @@ Repositori: [github.com/Lunatic-Yui/Jarkom-ETS](https://github.com/Lunatic-Yui/J
     - [Tabel kebutuhan](#tabel-kebutuhan)
     - [Tabel revisi VLSM](#tabel-revisi-vlsm)
     - [Tabel revisi CIDR](#tabel-revisi-cidr)
+    - [Pohon alokasi CIDR](#pohon-alokasi-cidr)
   - [Langkah pengerjaan](#langkah-pengerjaan-kelompok-8-1)
 - [Soal 3: Static Routing](#soal-3-static-routing)
   - [Pertanyaan](#pertanyaan-soal-3)
@@ -465,6 +466,53 @@ Screenshot berikut diambil dari spreadsheet Kelompok 8. Tabel tidak ditulis ulan
 #### Tabel revisi CIDR
 
 ![Tabel revisi CIDR Kelompok 8](./assets/jawaban/tabel/tabel-revisi-cidr.png)
+
+#### Pohon alokasi CIDR
+
+Diagram berikut menunjukkan pembagian blok alamat dari ringkasan tiap router sampai LAN di bawahnya.
+
+```mermaid
+flowchart LR
+  A["10.64.0.0/16"] --> A1["R-UTARA<br/>10.64.0.0/17"]
+  A --> A2["R-DC<br/>10.64.128.0/18"]
+  A --> A3["R-PELABUHAN<br/>10.64.192.0/18"]
+
+  A1 --> A1a["WiFi Publik Utara<br/>10.64.0.0/18"]
+  A1 --> A1b["Sensor Lalu Lintas Utara<br/>10.64.64.0/23"]
+
+  A2 --> A2a["CCTV Kota<br/>10.64.128.0/19"]
+  A2 --> A2b["Server dan Storage DC<br/>10.64.160.0/24"]
+
+  A3 --> A3a["Sensor dan SCADA Pelabuhan<br/>10.64.192.0/19"]
+  A3 --> A3b["Kantor Pelabuhan<br/>10.64.224.0/25"]
+
+  B["10.65.0.0/16"] --> B1["R-SELATAN<br/>10.65.0.0/18"]
+  B --> B2["R-TIMUR<br/>10.65.64.0/18"]
+  B --> B3["R-BARAT<br/>10.65.128.0/18"]
+  B --> B4["R-PUSAT<br/>10.65.192.0/20"]
+  B --> B5["BACKBONE<br/>10.65.208.0/27"]
+
+  B1 --> B1a["WiFi Publik Selatan<br/>10.65.0.0/19"]
+  B1 --> B1b["PJU Pintar Selatan<br/>10.65.32.0/25"]
+
+  B2 --> B2a["WiFi Publik Timur<br/>10.65.64.0/19"]
+  B2 --> B2b["Sensor Banjir Timur<br/>10.65.96.0/22"]
+
+  B3 --> B3a["WiFi Publik Barat<br/>10.65.128.0/19"]
+  B3 --> B3b["Puskesmas dan Sekolah Barat<br/>10.65.160.0/24"]
+
+  B4 --> B4a["Pegawai Balai Kota<br/>10.65.192.0/21"]
+  B4 --> B4b["Server Balai Kota<br/>10.65.200.0/27"]
+
+  B5 --> B5a["L1 R-PUSAT - R-DC<br/>10.65.208.0/30"]
+  B5 --> B5b["L2 R-PUSAT - R-UTARA<br/>10.65.208.4/30"]
+  B5 --> B5c["L3 R-PUSAT - R-SELATAN<br/>10.65.208.8/30"]
+  B5 --> B5d["L4 R-PUSAT - R-TIMUR<br/>10.65.208.12/30"]
+  B5 --> B5e["L5 R-PUSAT - R-BARAT<br/>10.65.208.16/30"]
+  B5 --> B5f["L6 R-UTARA - R-PELABUHAN<br/>10.65.208.20/30"]
+```
+
+Link `L7` antara R-DC dan R-UTARA hanya ada pada `K08_CIDR_OSPF.pkt` dan memakai `10.65.208.24/30`, sehingga masih berada di dalam blok backbone `10.65.208.0/27`.
 
 ### Langkah Pengerjaan Kelompok 8
 
