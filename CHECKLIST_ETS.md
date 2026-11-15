@@ -79,12 +79,6 @@
 - `10-email-receive-k8-smartcity-lab.png`
 - `11-dns-records-k8-smartcity-lab.png`
 
-## Nama lokasi
-
-Soal tidak menulis "Surabaya Selatan". Diagram acuan memakai nama `R-SELATAN`, WiFi Publik Selatan, dan PJU Pintar Selatan. Karena itu README memakai nama **Selatan**. Nama Utara, Timur, dan Barat juga mengikuti pola yang sama.
-
-"Portal Smart City Surabaya" hanya judul halaman web yang dibuat untuk layanan HTTP, bukan nama lokasi router.
-
 ## Pembagian A / B / C
 
 | Anggota | Peran | Pekerjaan |
@@ -94,22 +88,3 @@ Soal tidak menulis "Surabaya Selatan". Diagram acuan memakai nama `R-SELATAN`, W
 | Keisya (5027251068) | C - OSPF dan layanan | OSPF, L7, failover, DNS, web, FTP, email, serta video bagian 7-9 |
 
 README, laporan, bukti, dan persiapan video dikerjakan bersama. Tiap anggota menulis dan mengecek bagian yang menjadi tugasnya.
-
-## Urutan video
-
-| Bagian | Menit | Pembicara |
-|---|---|---|
-| 0 Pembukaan | 1 | A |
-| 1 Topologi | 2 | A |
-| 2 Subnetting | 2 | A |
-| 3 Static routing | 4 | B |
-| 4 DHCP | 3 | B |
-| 5 NAT | 2 | B |
-| 6 Tunnel GRE | 3 | B |
-| 7 OSPF dan failover | 5 | C |
-| 8 Layanan aplikasi | 5 | C |
-| 9 Penutup | 3 | C |
-
-Total 30 menit.
-
-Pembicara dibagi berurutan: A untuk bagian 0-2, B untuk bagian 3-6, dan C untuk bagian 7-9.
