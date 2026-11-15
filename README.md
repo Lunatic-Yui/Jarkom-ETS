@@ -1121,7 +1121,7 @@ Status lengkap per nomor soal ada di [CHECKLIST_ETS.md](./CHECKLIST_ETS.md).
 
 ## Video Demonstrasi
 
-Video ETS Kelompok 8: [Tonton di YouTube](LINK_YOUTUBE_DI_SINI)
+Video ETS Kelompok 8: [Tonton di YouTube](https://youtu.be/z-XkvmxTZOw)
 
 Pembagian bagian dan durasi:
 
@@ -1140,18 +1140,18 @@ Pembagian bagian dan durasi:
 
 Checklist rekaman:
 
-- [ ] Bagian 0 pembukaan
-- [ ] Bagian 1 topologi
-- [ ] Bagian 2 subnetting
-- [ ] Bagian 3 static routing
-- [ ] Bagian 4 DHCP
-- [ ] Bagian 5 NAT
-- [ ] Bagian 6 tunnel GRE
-- [ ] Bagian 7 OSPF dan failover
-- [ ] Bagian 8 layanan aplikasi
-- [ ] Bagian 9 penutup
-- [ ] Video digabung menjadi satu file 30 menit
-- [ ] Diunggah ke YouTube sebagai Unlisted
+- [x] Bagian 0 pembukaan
+- [x] Bagian 1 topologi
+- [x] Bagian 2 subnetting
+- [x] Bagian 3 static routing
+- [x] Bagian 4 DHCP
+- [x] Bagian 5 NAT
+- [x] Bagian 6 tunnel GRE
+- [x] Bagian 7 OSPF dan failover
+- [x] Bagian 8 layanan aplikasi
+- [x] Bagian 9 penutup
+- [x] Video digabung menjadi satu file 30 menit
+- [x] Diunggah ke YouTube sebagai Unlisted
 - [ ] Link video dibuka dari perangkat lain untuk memastikan bisa diakses
-- [ ] Link ditempel pada bagian ini
-- [ ] ZIP final dibuat ulang
+- [x] Link ditempel pada bagian ini
+- [x] ZIP final dibuat ulang
