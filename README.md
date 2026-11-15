@@ -1032,6 +1032,16 @@ DNS dan web dijalankan di SRV-BALAIKOTA. DHCP CCTV, FTP, dan email dijalankan di
 - FTP aktif dengan akun `admin-k8`; semua permission diaktifkan. Login dan perintah `dir` berhasil dari PC Balai Kota.
 - Email memakai domain `k8.smartcity.lab`, akun `admin@k8.smartcity.lab` dan `petugas@k8.smartcity.lab`. Kirim dan terima email antar akun berhasil.
 
+Kredensial layanan untuk verifikasi:
+
+| Layanan | Akun | Password |
+|---|---|---|
+| FTP SRV-STORAGE-DC | `admin-k8` | `K8ftp2026` |
+| Email PC Balai Kota | `admin@k8.smartcity.lab` | akun pengirim |
+| Email PC Pelabuhan | `petugas@k8.smartcity.lab` | `K8mail2026` |
+
+Server email yang dipakai kedua PC adalah `mail.k8.smartcity.lab`, baik untuk POP3 maupun SMTP.
+
 ![DHCP CCTV dari SRV-STORAGE-DC](./assets/bukti/OSPF/02-dhcp-cctv-helper.png)
 
 ![FTP login dan dir berhasil](./assets/bukti/CIDR/05-ftp-login-dir-success.png)
