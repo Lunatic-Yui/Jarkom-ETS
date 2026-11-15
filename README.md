@@ -469,6 +469,12 @@ Screenshot berikut diambil dari spreadsheet Kelompok 8. Tabel tidak ditulis ulan
 
 Diagram berikut menunjukkan pembagian blok alamat dari ringkasan tiap router sampai LAN di bawahnya.
 
+Sebaran ringkasan CIDR tiap router pada topologi:
+
+![Lingkaran ringkasan CIDR per router](./assets/added/lingkaran-per-router.png)
+
+Bentuk pohon alokasinya:
+
 ```mermaid
 flowchart LR
   A["10.64.0.0/16"] --> A1["R-UTARA<br/>10.64.0.0/17"]
