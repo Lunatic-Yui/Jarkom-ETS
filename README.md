@@ -1,6 +1,7 @@
 ﻿# JARKOM-ETS
 
 Repositori: [github.com/Lunatic-Yui/Jarkom-ETS](https://github.com/Lunatic-Yui/Jarkom-ETS)
+SPS: [Revisi Tabel Jarkom ETS di Google Sheets](https://docs.google.com/spreadsheets/d/1AZ2lz4vUmPSDnBboh_9l71gLhLvNkyjiI63zHFS2nsc/edit?gid=0#gid=0)
 
 ## Anggota Kelompok
 
