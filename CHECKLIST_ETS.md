@@ -30,26 +30,54 @@
 | 8 | DNS dan HTTP aktif di SRV-BALAIKOTA | Selesai | [Record DNS](./assets/bukti/Keisya/11-dns-records-k8-smartcity-lab.png) dan [portal web](./assets/bukti/Keisya/08-web-portal-smart-city.png) |
 | 8 | DHCP CCTV, FTP, dan email aktif di SRV-STORAGE-DC | Selesai | [DHCP CCTV](./assets/bukti/OSPF/02-dhcp-cctv-helper.png), [FTP](./assets/bukti/CIDR/05-ftp-login-dir-success.png), [kirim email](./assets/bukti/Keisya/09-email-send-k8-smartcity-lab.png), dan [terima email](./assets/bukti/Keisya/10-email-receive-k8-smartcity-lab.png) |
 
-## Berkas yang dikumpulkan
-
-- [K08_CIDR.pkt](./project/K08_CIDR.pkt): topologi utama dengan static routing, NAT, GRE, DHCP, dan layanan server.
-- [K08_CIDR_OSPF.pkt](./project/K08_CIDR_OSPF.pkt): salinan khusus OSPF dan uji failover L1 melalui L7.
-- [Revisi Tabel Jarkom ETS.xlsx](./Revisi%20Tabel%20Jarkom%20ETS.xlsx): tabel VLSM, CIDR, dan revisi jawaban UTS.
-- `ProjectJarkom_K8_107_049_068.ZIP`: paket akhir untuk diunggah.
-
-`Networking-ETS-K-08.pkt` dan `Networking-ETS-K-08-OSPF.pkt` adalah versi kerja lama. Keduanya sudah digantikan oleh dua file `K08_CIDR*.pkt`, jadi tidak ikut dikumpulkan.
-
-## Yang belum selesai
-
-1. **Video demonstrasi 30 menit** belum direkam dan diunggah sebagai video YouTube *unlisted*.
-2. Setelah video selesai, tambahkan link-nya ke README dan buat ulang ZIP final.
-3. Sebelum rekaman, cek lagi DHCP, ping antar-LAN, NAT, GRE, neighbor OSPF, failover L1, dan recovery.
-
 ## Bukti pengujian
 
-- [CIDR](./assets/bukti/CIDR/) - 10 gambar
-- [OSPF](./assets/bukti/OSPF/) - 14 gambar
-- [Bukti tambahan Keisya](./assets/bukti/Keisya/) - 14 gambar
+### `assets/bukti/CIDR/`
+
+- `01-web-dns-www-k8-local.png`
+- `02-dhcp-pc-balai-ipconfig.png`
+- `03-ping-dns-storage-wan.png`
+- `04-ping-antarkota-pju-selatan.png`
+- `05-ftp-login-dir-success.png`
+- `06-email-petugas-to-admin-success.png`
+- `07-dns-records.png`
+- `08-pool-pju-mask-25.png`
+- `09-dhcp-pju-mask-25.png`
+- `10-ping-pju-timur-zero-loss.png`
+
+### `assets/bukti/OSPF/`
+
+- `01-dhcp-pju-25.png`
+- `02-dhcp-cctv-helper.png`
+- `03-web-dns-success.png`
+- `04-email-success.png`
+- `05-ftp-success.png`
+- `06-ping-dns-storage.png`
+- `07-ping-antarkota.png`
+- `08-ping-internet.png`
+- `09-ospf-neighbors-full.png`
+- `10-ospf-routes.png`
+- `11-default-route.png`
+- `12-isp-return-route.png`
+- `13-wan-label.png`
+- `14-ping-internet-setelah-fix.png`
+
+### `assets/bukti/Keisya/`
+
+- `03-static-route-r-pusat.png`
+- `05-nat-pat-r-pusat.png`
+- `05-ping-internet.png`
+- `05-rute-router-isp.png`
+- `06-tunnel-gre-r-pusat.png`
+- `07-default-route-ospf.png`
+- `07-ospf-failover-l7.png`
+- `07-ospf-neighbor-r-pusat.png`
+- `07-ospf-recovery.png`
+- `07-rute-ospf.png`
+- `08-web-portal-smart-city.png`
+- `09-email-send-k8-smartcity-lab.png`
+- `10-email-receive-k8-smartcity-lab.png`
+- `11-dns-records-k8-smartcity-lab.png`
 
 ## Nama lokasi
 
@@ -85,7 +113,3 @@ README, laporan, bukti, dan persiapan video dikerjakan bersama. Tiap anggota men
 Total 30 menit.
 
 Pembicara dibagi berurutan: A untuk bagian 0-2, B untuk bagian 3-6, dan C untuk bagian 7-9.
-
-## Catatan DNS
-
-DNS utama aktif di SRV-BALAIKOTA. SRV-STORAGE-DC memakai `10.65.200.2` sebagai DNS client. Jika dosen meminta DNS aktif di kedua server, salin record yang sama ke layanan DNS SRV-STORAGE-DC sebelum rekaman.

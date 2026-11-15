@@ -101,6 +101,7 @@
     - [K08_CIDR.pkt](#pengujian-pada-k08_cidrpkt)
     - [K08_CIDR_OSPF.pkt](#pengujian-pada-k08_cidr_ospfpkt)
 - [Checklist akhir](#checklist-akhir)
+- [Video Demonstrasi](#video-demonstrasi)
 
 ## Soal 1: Topologi
 
@@ -1114,4 +1115,41 @@ Server email yang dipakai kedua PC adalah `mail.k8.smartcity.lab`, baik untuk PO
 
 ## Checklist Akhir
 
-Status lengkap per nomor soal dan sisa pekerjaan ada di [CHECKLIST_ETS.md](./CHECKLIST_ETS.md).
+Status lengkap per nomor soal ada di [CHECKLIST_ETS.md](./CHECKLIST_ETS.md).
+
+## Video Demonstrasi
+
+Video ETS Kelompok 8: [Tonton di YouTube](LINK_YOUTUBE_DI_SINI)
+
+Pembagian bagian dan durasi:
+
+| Bagian | Menit | Pembicara |
+|---|---|---|
+| 0 Pembukaan | 1 | A |
+| 1 Topologi | 2 | A |
+| 2 Subnetting | 2 | A |
+| 3 Static routing | 4 | B |
+| 4 DHCP | 3 | B |
+| 5 NAT | 2 | B |
+| 6 Tunnel GRE | 3 | B |
+| 7 OSPF dan failover | 5 | C |
+| 8 Layanan aplikasi | 5 | C |
+| 9 Penutup | 3 | C |
+
+Checklist rekaman:
+
+- [ ] Bagian 0 pembukaan
+- [ ] Bagian 1 topologi
+- [ ] Bagian 2 subnetting
+- [ ] Bagian 3 static routing
+- [ ] Bagian 4 DHCP
+- [ ] Bagian 5 NAT
+- [ ] Bagian 6 tunnel GRE
+- [ ] Bagian 7 OSPF dan failover
+- [ ] Bagian 8 layanan aplikasi
+- [ ] Bagian 9 penutup
+- [ ] Video digabung menjadi satu file 30 menit
+- [ ] Diunggah ke YouTube sebagai Unlisted
+- [ ] Link video dibuka dari perangkat lain untuk memastikan bisa diakses
+- [ ] Link ditempel pada bagian ini
+- [ ] ZIP final dibuat ulang
